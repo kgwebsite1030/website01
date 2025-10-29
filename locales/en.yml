@@ -1,0 +1,11 @@
+pages:
+  home:
+    title: Home
+  product:
+    title: Products
+    detail:
+      title: Products Detail
+  about:
+    title: About US
+  not-found:
+    title: Not Found
