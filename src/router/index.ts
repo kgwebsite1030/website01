@@ -63,6 +63,30 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/account',
+    name: 'Account',
+    component: DefaultLayout,
+    children: [
+      {
+        path: '',
+        name: 'AccountPage',
+        component: () => import('~/views/account/index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/ordert-racking',
+    name: 'OrdertRacking',
+    component: DefaultLayout,
+    children: [
+      {
+        path: '',
+        name: 'OrdertRackingPage',
+        component: () => import('~/views/ordert-racking/index.vue'),
+      },
+    ],
+  },
+  {
     path: '/auth',
     name: 'auth',
     component: AuthLayout,
