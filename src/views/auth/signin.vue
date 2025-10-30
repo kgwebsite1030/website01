@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { generateCaptcha } from '../../utils/captcha'
+import type { FormInstance, FormItemRule } from 'element-plus'
+import { generateCaptcha } from '~/utils/captcha'
 
 const router = useRouter()
 const loading = ref(false)
@@ -13,13 +12,25 @@ const form = reactive({
   captcha: '',
   emailCaptcha: '',
 })
-const errors = reactive({
-  email: '',
-  password: '',
-  captcha: '',
-  emailCaptcha: '',
-})
+
 const captchaImg = ref(generateCaptcha())
+
+const formRef = useTemplateRef<FormInstance>('formRef')
+const rules: Record<string, FormItemRule[]> = {
+  email: [
+    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+    { type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change'] },
+  ],
+  password: [
+    { required: !isEmailCaptcha.value, message: '请输入邮箱地址', trigger: 'blur' },
+  ],
+  emailCaptcha: [
+    { required: true, message: '请输入邮箱验证码', trigger: 'blur' },
+  ],
+  captcha: [
+    { required: !isEmailCaptcha.value, message: '请输入验证码', trigger: 'blur' },
+  ],
+}
 
 function refreshCaptcha() {
   captchaImg.value = generateCaptcha()
@@ -27,43 +38,18 @@ function refreshCaptcha() {
 }
 
 function handleSubmit() {
-  // 重置错误
-  errors.email = ''
-  errors.password = ''
-  errors.captcha = ''
-  errors.emailCaptcha = ''
-
-  if (!form.email) {
-    errors.email = '请输入邮箱地址'
-    return
-  }
-  if (!form.password && !isEmailCaptcha.value) {
-    errors.password = '请输入密码'
-    return
-  }
-  if (!form.captcha && !isEmailCaptcha.value) {
-    errors.captcha = '请输入验证码'
-    return
-  }
-  if (!isEmailCaptcha.value) {
-    if (form.captcha.toLowerCase() !== captchaImg.value.toLowerCase()) {
-      errors.captcha = '验证码错误'
-      refreshCaptcha()
-      return
+  formRef.value?.validate((valid: boolean) => {
+    if (valid) {
+      loading.value = true
+      setTimeout(() => {
+        loading.value = false
+        router.push('/')
+      }, 1000)
     }
-  }
-  else {
-    if (!form.emailCaptcha) {
-      errors.emailCaptcha = '请输入邮箱验证码'
-      return
+    else {
+      ElMessage.warning('表单有误，请检查输入项')
     }
-  }
-  loading.value = true
-  // 伪登录逻辑：1秒后跳转首页
-  setTimeout(() => {
-    loading.value = false
-    router.push('/')
-  }, 1000)
+  })
 }
 
 function gotoForget() {
@@ -75,73 +61,36 @@ function gotoSignup() {
 </script>
 
 <template>
-  <div class="mt-10 p-2 flex items-center justify-center md:mt-30">
-    <div class="px-8 py-10 rounded-lg max-w-sm w-full">
-      <form class="space-y-6" @submit.prevent="handleSubmit">
-        <div>
-          <label class="mb-1 block" for="email">邮箱</label>
-          <input
-            id="email" v-model="form.email" type="email" placeholder="请输入邮箱" autocomplete="email" required
-            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
-          >
-          <div v-if="errors.email" class="text-sm text-red-500 mt-1">
-            {{ errors.email }}
+  <div class="mx-auto mt-10 md:flex md:max-w-7xl md:items-center md:justify-center">
+    <div class="m-4 p-4 rounded shadow md:w-sm">
+      <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email" placeholder="请输入邮箱" autocomplete="email" />
+        </el-form-item>
+        <el-form-item v-if="!isEmailCaptcha" label="密码" prop="password">
+          <el-input v-model="form.password" type="password" placeholder="请输入密码" autocomplete="current-password" />
+        </el-form-item>
+        <el-form-item v-if="isEmailCaptcha" label="邮箱验证码" prop="emailCaptcha">
+          <el-input v-model="form.emailCaptcha" placeholder="请输入邮箱验证码" autocomplete="off" />
+        </el-form-item>
+        <el-form-item v-if="!isEmailCaptcha" label="验证码" prop="captcha">
+          <div style="display: flex; gap: 8px; align-items: center">
+            <span class="captchaImg" style="min-width:90px;cursor:pointer;" title="点击更换验证码" @click="refreshCaptcha">{{
+              captchaImg }}</span>
+            <el-input v-model="form.captcha" maxlength="6" placeholder="请输入验证码" autocomplete="off" style="flex:1" />
           </div>
-        </div>
-        <div v-if="!isEmailCaptcha">
-          <label class="mb-1 block" for="password">密码</label>
-          <input
-            id="password" v-model="form.password" type="password" placeholder="请输入密码"
-            autocomplete="current-password" required
-            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
-          >
-          <div v-if="errors.password" class="text-sm text-red-500 mt-1">
-            {{ errors.password }}
-          </div>
-        </div>
-        <div v-if="isEmailCaptcha">
-          <label class="mb-1 block" for="emailCaptcha">邮箱验证码</label>
-          <input
-            id="emailCaptcha" v-model="form.emailCaptcha" type="text" placeholder="请输入邮箱验证码"
-            autocomplete="current-emailCaptcha" required
-            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
-          >
-          <div v-if="errors.emailCaptcha" class="text-sm text-red-500 mt-1">
-            {{ errors.emailCaptcha }}
-          </div>
-        </div>
-        <div v-if="!isEmailCaptcha">
-          <label class="mb-1 block" for="captcha">验证码</label>
-          <div class="flex gap-3 items-center">
-            <div
-              class="text-lg tracking-widest font-mono px-2 py-1 rounded flex h-10 min-w-[90px] cursor-pointer select-none items-center justify-center"
-              title="点击更换验证码" @click="refreshCaptcha"
-            >
-              {{ captchaImg }}
-            </div>
-            <input
-              id="captcha" v-model="form.captcha" type="text" maxlength="6" placeholder="请输入验证码" autocomplete="off"
-              required
-              class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded flex-1 dark:text-white focus:outline-none focus:ring-2"
-            >
-          </div>
-          <div v-if="errors.captcha" class="text-sm text-red-500 mt-1">
-            {{ errors.captcha }}
-          </div>
-        </div>
-        <button
-          type="submit" :disabled="loading"
-          class="bg-primary-600 dark:bg-primary-500 hover:bg-primary-700 dark:hover:bg-primary-600 focus:ring-primary-500 font-medium px-4 py-2 border rounded flex w-full transition justify-center focus:outline-none disabled:opacity-60 focus:ring-2 focus:ring-offset-2"
-        >
-          <span v-if="!loading">登录</span>
-          <span v-else>登录中...</span>
-        </button>
-      </form>
+        </el-form-item>
+        <el-form-item>
+          <el-button :loading="loading" style="width:100%" @click="handleSubmit">
+            登录
+          </el-button>
+        </el-form-item>
+      </el-form>
       <div class="text-s mt-6 flex items-center justify-end">
         <a
           href="javascript:void(0)" class="hover:text-primary-600 underline"
           @click="() => isEmailCaptcha = !isEmailCaptcha"
-        >{{ isEmailCaptcha ? '邮箱验证码登录' : '密码登录' }}</a>
+        >{{ isEmailCaptcha ? '密码登录' : '邮箱验证码登录' }}</a>
       </div>
       <div class="text-sm mt-6 flex items-center justify-between">
         <a href="javascript:void(0)" class="hover:text-primary-600 underline" @click.prevent="gotoForget">忘记密码？</a>
@@ -150,9 +99,3 @@ function gotoSignup() {
     </div>
   </div>
 </template>
-
-<style scoped>
-.input {
-  @apply border-gray-300 dark:border-gray-600;
-}
-</style>
