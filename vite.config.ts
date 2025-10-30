@@ -1,7 +1,6 @@
 import path from 'node:path'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Shiki from '@shikijs/markdown-it'
-import { unheadVueComposablesImports } from '@unhead/vue'
 import Vue from '@vitejs/plugin-vue'
 import LinkAttributes from 'markdown-it-link-attributes'
 import Unocss from 'unocss/vite'
@@ -37,7 +36,6 @@ export default defineConfig({
         'vue',
         'vue-i18n',
         '@vueuse/core',
-        unheadVueComposablesImports,
         'vue-router',
         'pinia',
       ],
