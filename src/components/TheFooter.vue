@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { settings } from '~/settings'
+
+const left = settings.footerNav.slice(0, 2)
+const right = settings.footerNav.slice(2, 4)
+
+function handleClick() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -20,52 +27,32 @@ import { settings } from '~/settings'
           </div>
         </div>
         <div class="mt-16 gap-8 grid grid-cols-2 xl:mt-0 xl:col-span-2">
-
+          <!-- left -->
           <div class="md:gap-8 md:grid md:grid-cols-2">
-
-            <div>
+            <div v-for="item in left" :key="item.title">
               <h3 class="text-sm leading-6 font-semibold">
-                Company
+                {{ item.title }}
               </h3>
               <ul role="list" class="mt-6 space-y-4">
-                <li>
-                  <a href="#" class="text-sm leading-6">About</a>
-                </li>
-              </ul>
-            </div>
-
-            <div class="mt-10 md:mt-0">
-              <h3 class="text-sm leading-6 font-semibold">
-                Legal
-              </h3>
-              <ul role="list" class="mt-6 space-y-4">
-                <li>
-                  <a href="#" class="text-sm leading-6">Claim</a>
+                <li v-for="nav in item.links" :key="nav.path">
+                  <RouterLink :to="nav.path" class="text-sm leading-6" @click="handleClick">
+                    {{ nav.name }}
+                  </RouterLink>
                 </li>
               </ul>
             </div>
           </div>
-
+          <!-- right -->
           <div class="md:gap-8 md:grid md:grid-cols-2">
-
-            <div>
+            <div v-for="item in right" :key="item.title">
               <h3 class="text-sm leading-6 font-semibold">
-                Company
+                {{ item.title }}
               </h3>
               <ul role="list" class="mt-6 space-y-4">
-                <li>
-                  <a href="#" class="text-sm leading-6">About</a>
-                </li>
-              </ul>
-            </div>
-
-            <div class="mt-10 md:mt-0">
-              <h3 class="text-sm leading-6 font-semibold">
-                Legal
-              </h3>
-              <ul role="list" class="mt-6 space-y-4">
-                <li>
-                  <a href="#" class="text-sm leading-6">Claim</a>
+                <li v-for="nav in item.links" :key="nav.path">
+                  <RouterLink :to="nav.path" class="text-sm leading-6" @click="handleClick">
+                    {{ nav.name }}
+                  </RouterLink>
                 </li>
               </ul>
             </div>

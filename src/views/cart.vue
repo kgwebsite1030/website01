@@ -232,12 +232,12 @@
               </div>
 
               <div class="flex justify-end">
-                <a
-                  href="#"
+                <RouterLink
+                  to="/checkout"
                   class="text-sm text-gray-100 px-5 py-3 rounded-sm bg-gray-700 block transition hover:bg-gray-600"
                 >
                   Checkout
-                </a>
+                </RouterLink>
               </div>
             </div>
           </div>
