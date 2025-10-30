@@ -8,3 +8,6 @@ node_modules
 .idea/
 *.log
 public/assets/fonts
+
+src/types/auto-imports.d.ts
+src/types/components.d.ts
