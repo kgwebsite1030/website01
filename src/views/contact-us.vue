@@ -4,7 +4,7 @@
 
 <template>
   <div class="mx-auto px-6 max-w-7xl">
-    abouts
+    contacts
   </div>
 </template>
 

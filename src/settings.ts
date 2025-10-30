@@ -31,7 +31,7 @@ export const settings: Settings = {
   navList: [
     { name: 'Popular Products', path: '/product/popular' },
     { name: 'Product', path: '/product' },
-    { name: 'About Us', path: '/about-us' },
+    { name: 'Contact us', path: '/contact-us' },
   ],
   footerNav: [
     {
@@ -77,8 +77,8 @@ export const settings: Settings = {
       title: 'Company',
       links: [
         {
-          name: 'About us',
-          path: '/about-us',
+          name: 'Contact us',
+          path: '/contact-us',
         },
       ],
     },
