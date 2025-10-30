@@ -85,7 +85,7 @@ function handleSubmit() {
         <FormInput
           id="verify"
           v-model="form.verify"
-          label="邮箱地址"
+          label="验证码"
           type="number"
           placeholder="请输入您的验证码"
           :maxlength="6"
