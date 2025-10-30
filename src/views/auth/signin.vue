@@ -1,161 +1,158 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import AuthButton from './components/AuthButton.vue'
-import AuthCard from './components/AuthCard.vue'
-import FormInput from './components/FormInput.vue'
+import { generateCaptcha } from '../../utils/captcha'
 
 const router = useRouter()
 const loading = ref(false)
+const isEmailCaptcha = ref(false)
 
 const form = reactive({
   email: '',
   password: '',
-  rememberMe: false,
-  verify: '',
+  captcha: '',
+  emailCaptcha: '',
 })
-
 const errors = reactive({
   email: '',
   password: '',
-  verify: '',
+  captcha: '',
+  emailCaptcha: '',
 })
+const captchaImg = ref(generateCaptcha())
+
+function refreshCaptcha() {
+  captchaImg.value = generateCaptcha()
+  form.captcha = ''
+}
 
 function handleSubmit() {
   // 重置错误
   errors.email = ''
   errors.password = ''
+  errors.captcha = ''
+  errors.emailCaptcha = ''
 
-  // 简单验证
   if (!form.email) {
     errors.email = '请输入邮箱地址'
     return
   }
-
-  if (!form.password) {
+  if (!form.password && !isEmailCaptcha.value) {
     errors.password = '请输入密码'
     return
   }
-
-  try {
-    loading.value = true
-
-    // 这里添加实际的登录逻辑
-    // 例如: await userStore.login(form.email, form.password)
-
-    // 模拟登录延迟
-    setTimeout(() => {
-      // 登录成功后跳转
-      router.push('/')
-      loading.value = false
-    }, 1000)
+  if (!form.captcha && !isEmailCaptcha.value) {
+    errors.captcha = '请输入验证码'
+    return
   }
-  catch (error) {
-    console.error('登录失败:', error)
-    // 处理登录错误
+  if (!isEmailCaptcha.value) {
+    if (form.captcha.toLowerCase() !== captchaImg.value.toLowerCase()) {
+      errors.captcha = '验证码错误'
+      refreshCaptcha()
+      return
+    }
+  }
+  else {
+    if (!form.emailCaptcha) {
+      errors.emailCaptcha = '请输入邮箱验证码'
+      return
+    }
+  }
+  loading.value = true
+  // 伪登录逻辑：1秒后跳转首页
+  setTimeout(() => {
     loading.value = false
-  }
+    router.push('/')
+  }, 1000)
+}
+
+function gotoForget() {
+  router.push('/auth/forgot-password')
+}
+function gotoSignup() {
+  router.push('/auth/signup')
 }
 </script>
 
 <template>
-  <div class="px-4 py-12 bg-gray-50 flex items-center justify-center lg:px-8 sm:px-6 dark:bg-gray-900">
-    <AuthCard title="登录账户" subtitle="欢迎回来，请登录您的账户">
+  <div class="mt-10 p-2 flex items-center justify-center md:mt-30">
+    <div class="px-8 py-10 rounded-lg max-w-sm w-full">
       <form class="space-y-6" @submit.prevent="handleSubmit">
-        <FormInput
-          id="email"
-          v-model="form.email"
-          label="邮箱地址"
-          type="email"
-          placeholder="请输入您的邮箱"
-          required
-          :error="errors.email"
-        />
-
-        <FormInput
-          id="password"
-          v-model="form.password"
-          label="密码"
-          type="password"
-          placeholder="请输入您的密码"
-          required
-          :error="errors.password"
-        />
-
-        <FormInput
-          id="verify"
-          v-model="form.verify"
-          label="邮箱地址"
-          type="number"
-          placeholder="请输入您的验证码"
-          :maxlength="6"
-          :error="errors.verify"
-        />
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember-me"
-              v-model="form.rememberMe"
-              name="remember-me"
-              type="checkbox"
-              class="text-primary-600 focus:ring-primary-500 border-gray-300 rounded h-4 w-4"
-            >
-            <label for="remember-me" class="text-sm text-gray-700 ml-2 block dark:text-gray-300">
-              记住我
-            </label>
-          </div>
-
-          <div class="text-sm">
-            <RouterLink to="/auth/forgot-password" class="text-primary-600 hover:text-primary-500 font-medium">
-              忘记密码?
-            </RouterLink>
-          </div>
-        </div>
-
         <div>
-          <AuthButton :loading="loading">
-            登录
-          </AuthButton>
-        </div>
-      </form>
-
-      <div class="mt-6">
-        <div class="relative">
-          <div class="flex items-center inset-0 absolute">
-            <div class="border-t border-gray-300 w-full dark:border-gray-600" />
-          </div>
-          <div class="text-sm flex justify-center relative">
-            <span class="text-gray-500 px-2 bg-white dark:text-gray-400 dark:bg-gray-800">
-              或者
-            </span>
+          <label class="mb-1 block" for="email">邮箱</label>
+          <input
+            id="email" v-model="form.email" type="email" placeholder="请输入邮箱" autocomplete="email" required
+            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
+          >
+          <div v-if="errors.email" class="text-sm text-red-500 mt-1">
+            {{ errors.email }}
           </div>
         </div>
-
-        <div class="mt-6">
-          <div class="mt-6">
-            <RouterLink
-              to="/auth/signup"
-              class="text-sm text-gray-700 font-medium px-4 py-2 border border-gray-300 rounded-md bg-white inline-flex w-full shadow-sm justify-center dark:text-gray-200 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+        <div v-if="!isEmailCaptcha">
+          <label class="mb-1 block" for="password">密码</label>
+          <input
+            id="password" v-model="form.password" type="password" placeholder="请输入密码"
+            autocomplete="current-password" required
+            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
+          >
+          <div v-if="errors.password" class="text-sm text-red-500 mt-1">
+            {{ errors.password }}
+          </div>
+        </div>
+        <div v-if="isEmailCaptcha">
+          <label class="mb-1 block" for="emailCaptcha">邮箱验证码</label>
+          <input
+            id="emailCaptcha" v-model="form.emailCaptcha" type="text" placeholder="请输入邮箱验证码"
+            autocomplete="current-emailCaptcha" required
+            class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded w-full focus:outline-none focus:ring-2"
+          >
+          <div v-if="errors.emailCaptcha" class="text-sm text-red-500 mt-1">
+            {{ errors.emailCaptcha }}
+          </div>
+        </div>
+        <div v-if="!isEmailCaptcha">
+          <label class="mb-1 block" for="captcha">验证码</label>
+          <div class="flex gap-3 items-center">
+            <div
+              class="text-lg tracking-widest font-mono px-2 py-1 rounded flex h-10 min-w-[90px] cursor-pointer select-none items-center justify-center"
+              title="点击更换验证码" @click="refreshCaptcha"
             >
-              创建新账户
-            </RouterLink>
+              {{ captchaImg }}
+            </div>
+            <input
+              id="captcha" v-model="form.captcha" type="text" maxlength="6" placeholder="请输入验证码" autocomplete="off"
+              required
+              class="input input-bordered focus:ring-primary-500 px-3 py-2 border rounded flex-1 dark:text-white focus:outline-none focus:ring-2"
+            >
+          </div>
+          <div v-if="errors.captcha" class="text-sm text-red-500 mt-1">
+            {{ errors.captcha }}
           </div>
         </div>
+        <button
+          type="submit" :disabled="loading"
+          class="bg-primary-600 dark:bg-primary-500 hover:bg-primary-700 dark:hover:bg-primary-600 focus:ring-primary-500 font-medium px-4 py-2 border rounded flex w-full transition justify-center focus:outline-none disabled:opacity-60 focus:ring-2 focus:ring-offset-2"
+        >
+          <span v-if="!loading">登录</span>
+          <span v-else>登录中...</span>
+        </button>
+      </form>
+      <div class="text-s mt-6 flex items-center justify-end">
+        <a
+          href="javascript:void(0)" class="hover:text-primary-600 underline"
+          @click="() => isEmailCaptcha = !isEmailCaptcha"
+        >{{ isEmailCaptcha ? '邮箱验证码登录' : '密码登录' }}</a>
       </div>
-    </AuthCard>
+      <div class="text-sm mt-6 flex items-center justify-between">
+        <a href="javascript:void(0)" class="hover:text-primary-600 underline" @click.prevent="gotoForget">忘记密码？</a>
+        <a href="javascript:void(0)" class="hover:text-primary-600 underline" @click.prevent="gotoSignup">注册</a>
+      </div>
+    </div>
   </div>
 </template>
 
-<style>
-  input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type='number'] {
-  -moz-appearance: textfield;
+<style scoped>
+.input {
+  @apply border-gray-300 dark:border-gray-600;
 }
 </style>
