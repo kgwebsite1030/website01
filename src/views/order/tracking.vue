@@ -21,8 +21,8 @@ const orders: Order[] = [
     status: 'delivered',
     total: 299.0,
     items: [
-      { id: 'SKU-1001', name: '无线蓝牙耳机', quantity: 1, price: 199 },
-      { id: 'SKU-1002', name: 'Type-C 充电线', quantity: 2, price: 50 },
+      { id: 'SKU-1001', name: 'Wireless Bluetooth Earbuds', quantity: 1, price: 199 },
+      { id: 'SKU-1002', name: 'Type-C Charging Cable', quantity: 2, price: 50 },
     ],
   },
   {
@@ -31,8 +31,8 @@ const orders: Order[] = [
     status: 'shipped',
     total: 1299.0,
     items: [
-      { id: 'SKU-2001', name: '机械键盘', quantity: 1, price: 699 },
-      { id: 'SKU-2002', name: '人体工学鼠标', quantity: 1, price: 600 },
+      { id: 'SKU-2001', name: 'Mechanical Keyboard', quantity: 1, price: 699 },
+      { id: 'SKU-2002', name: 'Ergonomic Mouse', quantity: 1, price: 600 },
     ],
   },
   {
@@ -41,7 +41,7 @@ const orders: Order[] = [
     status: 'processing',
     total: 89.0,
     items: [
-      { id: 'SKU-3001', name: '钢化膜（两片装）', quantity: 1, price: 89 },
+      { id: 'SKU-3001', name: 'Tempered Glass Screen Protector (2-Pack)', quantity: 1, price: 89 },
     ],
   },
 ]
@@ -62,10 +62,10 @@ function gotoOrderDetail(id: string) {
     <div class="mx-auto px-4 py-8 max-w-7xl lg:px-8 sm:px-6 sm:py-12">
       <div class="flex items-baseline justify-between">
         <h1 class="text-2xl tracking-tight font-semibold">
-          订单跟踪
+          Order Tracking
         </h1>
         <p class="text-sm">
-          共 {{ orders.length }} 笔订单
+          Total {{ orders.length }} orders
         </p>
       </div>
 
@@ -87,20 +87,20 @@ function gotoOrderDetail(id: string) {
                   </span>
                 </div>
                 <p class="text-sm mt-1">
-                  下单时间：{{ order.createdAt }}
+                  Ordered at: {{ order.createdAt }}
                 </p>
               </div>
               <div class="flex gap-4 items-center md:gap-6">
                 <div class="text-right">
                   <p class="text-sm">
-                    订单金额
+                    Order Total
                   </p>
                   <p class="text-base font-semibold">
                     {{ formatCurrency(order.total) }}
                   </p>
                 </div>
                 <button type="button" class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center" @click="gotoOrderDetail(order.id)">
-                  查看详情
+                  View Details
                 </button>
               </div>
             </header>
@@ -116,12 +116,12 @@ function gotoOrderDetail(id: string) {
                     {{ item.name }}
                   </p>
                   <p class="text-sm mt-0.5">
-                    数量 × {{ item.quantity }}
+                    Qty × {{ item.quantity }}
                   </p>
                 </div>
                 <div class="text-right shrink-0">
                   <p class="text-sm">
-                    单价
+                    Unit Price
                   </p>
                   <p class="font-medium">
                     {{ formatCurrency(item.price) }}
