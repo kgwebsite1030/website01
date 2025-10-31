@@ -122,9 +122,7 @@ watchEffect(() => {
           </h3>
           <div class="space-y-4">
             <div
-              class="px-4 py-2 border rounded flex cursor-pointer items-center"
-              :class="paymentMethod === 'card' ? 'border-indigo-500' : 'border-gray-300'"
-              @click="paymentMethod = 'card'"
+              class="px-4 py-2 border border-indigo-500 rounded flex cursor-pointer items-center"
             >
               <input v-model="paymentMethod" type="radio" class="mr-3" value="card">
               <div class="flex flex-wrap gap-2 items-center">
@@ -143,15 +141,6 @@ watchEffect(() => {
                 <span class="text-sm ml-2">Credit / Debit Card</span>
               </div>
             </div>
-            <div
-              class="px-4 py-2 border rounded flex cursor-pointer items-center"
-              :class="paymentMethod === 'paypal' ? 'border-indigo-500' : 'border-gray-300'"
-              @click="paymentMethod = 'paypal'"
-            >
-              <input v-model="paymentMethod" type="radio" class="mr-3" value="paypal">
-              <img src="https://www.svgrepo.com/show/349380/paypal.svg" class="h-6 w-8 object-contain" alt="paypal">
-              <span class="text-sm ml-2">PayPal</span>
-            </div>
           </div>
 
           <!-- 卡支付表单，仅选中卡时显示 -->
@@ -164,9 +153,9 @@ watchEffect(() => {
     </div>
 
     <div class="mt-10 w-full md:pr-10 md:w-2/3">
-      <button class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700">
+      <el-button type="primary" class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700">
         Place Order
-      </button>
+      </el-button>
     </div>
   </div>
 </template>

@@ -8,22 +8,8 @@ const categories: Category[] = [
     id: 1,
     name: '电子产品',
     children: [
-      {
-        id: 2,
-        name: '手机',
-        children: [
-          { id: 9, name: 'iphone12' },
-          { id: 10, name: 'iphone16' },
-        ],
-      },
-      {
-        id: 3,
-        name: '电脑',
-        children: [
-          { id: 4, name: '笔记本' },
-          { id: 5, name: '台式机' },
-        ],
-      },
+      { id: 9, name: 'iphone12' },
+      { id: 10, name: 'iphone16' },
     ],
   },
   {
@@ -61,22 +47,20 @@ function handleProductListClick(event: MouseEvent) {
 <template>
   <div class="mx-auto px-4 py-6 max-w-7xl sm:px-6">
     <h1 class="font-bold mb-6 md:text-3xl sm:text-2xl">
-      商品列表
+      Products
     </h1>
 
     <div class="flex flex-col gap-6 lg:flex-row">
       <!-- 左侧分类选择器 -->
       <div class="mb-6 flex-shrink-0 w-full lg:mb-0 lg:w-[250px]">
+        <!-- 当前选中分类id === selectedCategoryId -->
         <CategoryTreeSelector v-model="selectedCategoryId" :data="categories" />
-        <p class="text-xs mt-4 p-2 rounded sm:text-sm">
-          已选分类 ID: <span class="font-medium">{{ selectedCategoryId || '无' }}</span>
-        </p>
       </div>
 
       <!-- 右侧商品列表 -->
       <div class="flex-1">
         <div
-          class="gap-4 grid grid-cols-1 sm:gap-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2"
+          class="gap-4 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2"
           @click="handleProductListClick"
         >
           <template v-for="_d in 7" :key="_d">

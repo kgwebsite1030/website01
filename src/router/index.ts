@@ -75,14 +75,19 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/ordert-racking',
-    name: 'OrdertRacking',
+    path: '/order',
+    name: 'Order',
     component: DefaultLayout,
     children: [
       {
-        path: '',
-        name: 'OrdertRackingPage',
-        component: () => import('~/views/ordert-racking/index.vue'),
+        path: '/order/tracking',
+        name: 'OrderTrackingPage',
+        component: () => import('~/views/order/tracking.vue'),
+      },
+      {
+        path: '/order/detail',
+        name: 'OrderDetailPage',
+        component: () => import('~/views/order/detail.vue'),
       },
     ],
   },

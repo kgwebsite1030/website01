@@ -19,7 +19,7 @@ function handleClick() {
         <!-- left -->
         <div class="md:gap-8 md:grid md:grid-cols-2">
           <div v-for="item in left" :key="item.title" class="py-6">
-            <h3 class="text-sm leading-6">
+            <h3 class="text-lg leading-6">
               {{ item.title }}
             </h3>
             <ul role="list" class="mt-6 space-y-4">
