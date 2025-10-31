@@ -1,5 +1,11 @@
 <script setup lang='ts'>
+import { formatUSDCurrency } from '~/utils/currency'
+
 const count = ref(1)
+
+function formatCurrency(value: number) {
+  return formatUSDCurrency('en', value)
+}
 </script>
 
 <template>
@@ -59,8 +65,8 @@ const count = ref(1)
                   <span class="sr-only">Remove item</span>
 
                   <svg
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="size-5 sm:size-4"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5 sm:size-4"
                   >
                     <path
                       stroke-linecap="round" stroke-linejoin="round"
@@ -77,32 +83,31 @@ const count = ref(1)
               <dl class="text-sm space-y-0.5">
                 <div class="flex justify-between">
                   <dt>Subtotal</dt>
-                  <dd>£250</dd>
+                  <dd>{{ formatCurrency(250) }}</dd>
                 </div>
 
                 <div class="flex justify-between">
                   <dt>VAT</dt>
-                  <dd>£25</dd>
+                  <dd>{{ formatCurrency(25) }}</dd>
                 </div>
 
                 <div class="flex justify-between">
                   <dt>Discount</dt>
-                  <dd>-£20</dd>
+                  <dd>{{ formatCurrency(20) }}</dd>
                 </div>
 
                 <div class="font-medium flex justify-between !text-base">
                   <dt>Total</dt>
-                  <dd>£200</dd>
+                  <dd>{{ formatCurrency(200) }}</dd>
                 </div>
               </dl>
 
               <div class="flex justify-end">
-                <RouterLink
-                  to="/checkout"
-                  class="text-sm text-gray-100 px-5 py-3 rounded-sm bg-gray-700 block transition hover:bg-gray-600"
-                >
-                  Checkout
-                </RouterLink>
+                <el-button type="primary" plain>
+                  <RouterLink to="/checkout" class="text-sm px-5 py-3 rounded-sm block transition">
+                    Checkout
+                  </RouterLink>
+                </el-button>
               </div>
             </div>
           </div>

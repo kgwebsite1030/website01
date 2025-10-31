@@ -1,4 +1,6 @@
 <script setup lang='ts'>
+import { formatUSDCurrency } from '~/utils/currency'
+
 interface OrderItem {
   id: string
   name: string
@@ -47,7 +49,7 @@ const orders: Order[] = [
 ]
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(value)
+  return formatUSDCurrency('en', value)
 }
 
 const router = useRouter()

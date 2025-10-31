@@ -29,7 +29,7 @@ export const settings: Settings = {
   copyright: '© 2020 Your Company, Inc. All rights reserved.',
   companyLogo: 'https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500',
   navList: [
-    { name: 'Popular Products', path: '/product/popular' },
+    { name: 'Home', path: '/' },
     { name: 'Product', path: '/product' },
     { name: 'Contact us', path: '/contact-us' },
   ],
@@ -66,10 +66,6 @@ export const settings: Settings = {
         {
           name: 'Products',
           path: '/product',
-        },
-        {
-          name: 'Popular Products',
-          path: '/product/popular',
         },
       ],
     },
