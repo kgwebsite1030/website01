@@ -71,7 +71,7 @@ const order: OrderDetail = {
 }
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(value)
+  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'USD' }).format(value)
 }
 
 const total = order.subtotal + order.shippingFee - order.discount
