@@ -2,7 +2,7 @@
 import { settings } from '~/settings'
 
 const openMenu = ref(false)
-const toggleMenu = () => {
+function toggleMenu() {
   openMenu.value = !openMenu.value
 }
 </script>
@@ -14,15 +14,19 @@ const toggleMenu = () => {
       <div class="flex lg:flex-1">
         <RouterLink to="/" class="p-1.5 -m-1.5">
           <span class="sr-only">Your Company</span>
-          <img :src="settings.companyLogo" alt="company log" class="h-8 w-auto" />
+          <img :src="settings.companyLogo" alt="company log" class="h-8 w-auto">
         </RouterLink>
       </div>
       <div class="flex lg:hidden">
-        <button type="button" @click="toggleMenu"
-          class="p-2.5 rounded-md inline-flex items-center justify-center -m-2.5">
+        <button
+          type="button" class="p-2.5 rounded-md inline-flex items-center justify-center -m-2.5"
+          @click="toggleMenu"
+        >
           <span class="sr-only">Open main menu</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
-            aria-hidden="true" class="size-6">
+          <svg
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
+            aria-hidden="true" class="size-6"
+          >
             <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
@@ -35,11 +39,12 @@ const toggleMenu = () => {
         </template>
       </div>
       <div class="gap-6 hidden lg:flex lg:flex-1 lg:justify-end">
-        <RouterLink to="/favorite" i-carbon-favorite></RouterLink>
-        <RouterLink to="/cart" i-carbon-shopping-cart></RouterLink>
+        <RouterLink to="/favorite" i-carbon-favorite />
+        <RouterLink to="/cart" i-carbon-shopping-cart />
         <ToggleLocale />
         <ToggleTheme />
-        <RouterLink to="/auth/signin" class="text-sm/6 font-semibold">Log in <span aria-hidden="true">&rarr;</span>
+        <RouterLink to="/auth/signin" class="text-sm/6 font-semibold">
+          Log in <span aria-hidden="true">&rarr;</span>
         </RouterLink>
       </div>
     </nav>
@@ -47,17 +52,22 @@ const toggleMenu = () => {
     <dialog :open="openMenu" class="backdrop:bg-transparent">
       <div tabindex="0" class="inset-0 fixed focus:outline-none">
         <div
-          class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto dark:bg-gray-900 sm:max-w-sm sm:ring-1">
+          class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto dark:bg-gray-900 sm:max-w-sm sm:ring-1"
+        >
           <div class="flex items-center justify-between">
             <a href="#" class="p-1.5 -m-1.5">
               <span class="sr-only">Your Company</span>
-              <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt=""
-                class="h-8 w-auto">
+              <img
+                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt=""
+                class="h-8 w-auto"
+              >
             </a>
-            <button type="button" @click="toggleMenu" class="p-2.5 rounded-md -m-2.5">
+            <button type="button" class="p-2.5 rounded-md -m-2.5" @click="toggleMenu">
               <span class="sr-only">Close menu</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
-                aria-hidden="true" class="size-6">
+              <svg
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
+                aria-hidden="true" class="size-6"
+              >
                 <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </button>
@@ -66,8 +76,10 @@ const toggleMenu = () => {
             <div class="divide-white/10 divide-y -my-6">
               <div class="py-6 space-y-2">
                 <template v-for="item in settings.navList" :key="item.path">
-                  <RouterLink @click="toggleMenu" :to="item.path"
-                    class="text-base/7 font-semibold px-3 py-2 rounded-lg block -mx-3">
+                  <RouterLink
+                    :to="item.path" class="text-base/7 font-semibold px-3 py-2 rounded-lg block -mx-3"
+                    @click="toggleMenu"
+                  >
                     {{ item.name }}
                   </RouterLink>
                 </template>
@@ -75,8 +87,10 @@ const toggleMenu = () => {
                 <ToggleTheme class="text-base/7 font-semibold px-3 py-2 rounded-lg block -mx-3" />
               </div>
               <div class="py-6">
-                <RouterLink to="/auth/signin" class="text-base/7 font-semibold px-3 py-2.5 rounded-lg block -mx-3">Log
-                  in</RouterLink>
+                <RouterLink to="/auth/signin" class="text-base/7 font-semibold px-3 py-2.5 rounded-lg block -mx-3">
+                  Log
+                  in
+                </RouterLink>
               </div>
             </div>
           </div>
