@@ -5,7 +5,7 @@ pages:
     title: 产品列表
     detail:
       title: 产品详情
-  about:
+  contact:
     title: 关于我们
   not-found:
     title: 未找到页面

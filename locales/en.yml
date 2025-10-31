@@ -5,7 +5,7 @@ pages:
     title: Products
     detail:
       title: Products Detail
-  about:
-    title: About US
+  contact:
+    title: Contact US
   not-found:
     title: Not Found
