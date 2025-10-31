@@ -49,6 +49,12 @@ const orders: Order[] = [
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(value)
 }
+
+const router = useRouter()
+
+function gotoOrderDetail(id: string) {
+  router.push({ path: '/order/detail', query: { id } })
+}
 </script>
 
 <template>
@@ -93,7 +99,7 @@ function formatCurrency(value: number) {
                     {{ formatCurrency(order.total) }}
                   </p>
                 </div>
-                <button type="button" class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center">
+                <button type="button" class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center" @click="gotoOrderDetail(order.id)">
                   查看详情
                 </button>
               </div>

@@ -47,8 +47,8 @@ export const settings: Settings = {
       title: 'Order Manager',
       links: [
         {
-          name: 'Ordert Racking',
-          path: '/ordert-racking',
+          name: 'Order Tracking',
+          path: '/order/tracking',
         },
         {
           name: 'Cart',
