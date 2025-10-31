@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
-import { generateCaptcha } from '~/utils/captcha'
+import { generateCaptcha, renderCaptchaToDataURL } from '~/utils/captcha'
 
 const router = useRouter()
 const loading = ref(false)
@@ -13,7 +13,7 @@ const form = reactive({
   emailCaptcha: '',
 })
 
-const captchaImg = ref(generateCaptcha())
+const captchaImg = ref(renderCaptchaToDataURL(generateCaptcha()))
 
 const formRef = useTemplateRef<FormInstance>('formRef')
 const rules: Record<string, FormItemRule[]> = {
@@ -33,7 +33,7 @@ const rules: Record<string, FormItemRule[]> = {
 }
 
 function refreshCaptcha() {
-  captchaImg.value = generateCaptcha()
+  captchaImg.value = renderCaptchaToDataURL(generateCaptcha())
   form.captcha = ''
 }
 
@@ -50,6 +50,22 @@ function handleSubmit() {
       ElMessage.warning('表单有误，请检查输入项')
     }
   })
+}
+
+const countdown = ref(60)
+const senEmailCodeFlag = ref(false)
+let timer: ReturnType<typeof setInterval>
+
+function senEmailCode() {
+  senEmailCodeFlag.value = true
+  timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value === 0) {
+      clearInterval(timer)
+      countdown.value = 60
+      senEmailCodeFlag.value = false
+    }
+  }, 1000)
 }
 
 function gotoForget() {
@@ -71,12 +87,16 @@ function gotoSignup() {
           <el-input v-model="form.password" type="password" placeholder="请输入密码" autocomplete="current-password" />
         </el-form-item>
         <el-form-item v-if="isEmailCaptcha" label="邮箱验证码" prop="emailCaptcha">
-          <el-input v-model="form.emailCaptcha" placeholder="请输入邮箱验证码" autocomplete="off" />
+          <el-input v-model="form.emailCaptcha" placeholder="请输入邮箱验证码" autocomplete="off">
+            <template #append>
+              <span v-if="!senEmailCodeFlag" @click="senEmailCode">发送邮箱验证码</span>
+              <span v-if="senEmailCodeFlag">{{ countdown }} s</span>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item v-if="!isEmailCaptcha" label="验证码" prop="captcha">
           <div style="display: flex; gap: 8px; align-items: center">
-            <span class="captchaImg" style="min-width:90px;cursor:pointer;" title="点击更换验证码" @click="refreshCaptcha">{{
-              captchaImg }}</span>
+            <img class="captchaImg" :src="captchaImg" style="min-width:90px;cursor:pointer;" title="点击更换验证码" @click="refreshCaptcha">
             <el-input v-model="form.captcha" maxlength="6" placeholder="请输入验证码" autocomplete="off" style="flex:1" />
           </div>
         </el-form-item>
