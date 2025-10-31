@@ -1,23 +1,22 @@
 <script setup lang="ts">
-// import  { useRequest } from 'alova/client';
-// import {getIndexCases} from "~/api";
+import { useRequest } from 'alova/client'
+import { getIndexCases } from '~/api'
 
 defineOptions({
   name: 'IndexPage',
 })
 
-// const params = reactive({
-//   key: '513817480b6713e45eaa59c3037017db',
-//   id: '9872ed9fc22fc182',
-// });
-
-onMounted(() => {
-  // const { data } = useRequest(() => getIndexCases(params));
+const params = reactive({
+  key: '513817480b6713e45eaa59c3037017db',
+  id: '9872ed9fc22fc182',
 })
+
+const { data } = useRequest(() => getIndexCases(params), { immediately: true })
 </script>
 
 <template>
   <div class="mx-auto px-6 max-w-7xl">
+    11111111{{ data }}
     <div class="px-6 pt-14 relative isolate lg:px-8">
       <div
         aria-hidden="true"
