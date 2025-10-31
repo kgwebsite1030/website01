@@ -55,11 +55,6 @@ const routes: RouteRecordRaw[] = [
         name: 'ProductDetailPage',
         component: () => import('~/views/product/detail.vue'),
       },
-      {
-        path: 'popular',
-        name: 'ProductPopularPage',
-        component: () => import('~/views/product/popular.vue'),
-      },
     ],
   },
   {
