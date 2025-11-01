@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@10.19.0",
   "scripts": {
-    "build": "vite-ssg build",
+    "build": "vite build",
     "dev": "vite --port 3333 --open",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -18,13 +18,14 @@
   },
   "dependencies": {
     "@alova/adapter-xhr": "^2.2.1",
-    "@tailwindcss/vite": "^4.1.16",
+    "@unocss/eslint-config": "^66.5.4",
     "@unocss/reset": "^66.5.4",
     "@vueuse/core": "^13.9.0",
     "alova": "^3.3.4",
     "element-plus": "^2.11.7",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.3",
+    "unocss": "^66.5.4",
     "vue": "^3.5.22",
     "vue-i18n": "^11.1.12",
     "vue-router": "^4.6.3"
@@ -49,7 +50,6 @@
     "rollup": "^4.52.5",
     "shiki": "^3.14.0",
     "simple-git-hooks": "^2.13.1",
-    "tailwindcss": "^4.1.16",
     "taze": "^19.9.0",
     "typescript": "^5.9.3",
     "unplugin-auto-import": "^19.3.0",
