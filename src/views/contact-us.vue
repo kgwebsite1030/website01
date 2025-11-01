@@ -136,9 +136,9 @@
                     placeholder="Please enter your message here..." required="" rows="5"
                   />
                 </div>
-                <button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="submit">
+                <el-button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="primary" plain>
                   Send Message
-                </button>
+                </el-button>
               </form>
             </div>
           </div>

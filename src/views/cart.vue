@@ -1,10 +1,47 @@
 <script setup lang='ts'>
-import { formatUSDCurrency } from '~/utils/currency'
+import { formatCurrency } from '~/utils/currency'
 
-const count = ref(1)
+const router = useRouter()
 
-function formatCurrency(value: number) {
-  return formatUSDCurrency('en', value)
+const carts = ref([
+  {
+    id: 1,
+    title: 'Basic Tee 6-Pack',
+    skus: [{ size: 'xxl' }],
+    price: 32,
+    count: 1,
+    cover: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=830&amp;q=80',
+  },
+])
+
+const total = computed(() => {
+  return carts.value.reduce((prev, curr) => prev += (curr.count * curr.price), 0)
+})
+
+/**
+ * 商品数量被改变
+ */
+function handleChangeQty(_item: any) {
+  console.log('qty', _item)
+}
+
+/**
+ * 移除商品
+ */
+function handleRemove(_item: any) {
+  console.log('remove', _item)
+}
+
+/**
+ * 结算
+ */
+function checkout() {
+  console.log('checkout')
+  // 1、生成选中的商品id集合
+  // 2、发送后端生成订单信息
+  const orderId = 1
+  // 3、携带订单id跳转至结算页
+  router.push({ path: '/checkout', query: { orderId } })
 }
 </script>
 
@@ -20,48 +57,43 @@ function formatCurrency(value: number) {
 
         <div class="mt-8">
           <ul class="space-y-4">
-            <li class="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center">
-              <img
-                src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=830&amp;q=80"
-                alt="" class="rounded-sm size-14 object-cover sm:size-16"
-              >
+            <li v-for="item in carts" :key="item.id" class="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center">
+              <img :src="item.cover" alt="" class="rounded-sm size-14 object-cover sm:size-16">
 
               <div class="flex-1 w-full">
                 <h3 class="text-sm sm:text-base">
-                  Basic Tee 6-Pack
+                  {{ item.title }}
                 </h3>
 
-                <dl class="text-[11px] mt-0.5 space-y-px sm:text-[10px]">
-                  <div>
-                    <dt class="inline">
-                      Size:
-                    </dt>
-                    <dd class="inline">
-                      XXS
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt class="inline">
-                      Color:
-                    </dt>
-                    <dd class="inline">
-                      White
-                    </dd>
+                <dl class="space-y-px] mt-0.5">
+                  <div v-for="(sku, idx) in item.skus" :key="idx">
+                    <template v-for="(val, key) in sku" :key="key">
+                      <dt class="inline">
+                        {{ key }}:
+                      </dt>
+                      <dd class="inline">
+                        {{ val }}
+                      </dd>
+                    </template>
                   </div>
                 </dl>
+
+                <span class="text-sm text-red">
+                  {{ formatCurrency(item.price) }}
+                </span>
               </div>
 
               <div class="flex gap-2 w-full items-center justify-between sm:flex-1 sm:w-auto sm:justify-end">
                 <form class="flex items-center">
                   <label for="Line1Qty" class="sr-only"> Quantity </label>
                   <el-input-number
-                    id="Line1Qty" type="number" :min="1" :model-value="count" :max="99" size="small"
+                    id="Line1Qty" v-model="item.count" type="number" :min="1" :max="99" size="small"
                     class="text-xs p-0 text-center rounded-sm h-9 w-16 [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:outline-hidden sm:h-8 sm:w-12"
+                    @change="handleChangeQty(item)"
                   />
                 </form>
 
-                <button class="transition hover:text-red-600">
+                <button class="transition hover:text-red-600" @click="handleRemove(item)">
                   <span class="sr-only">Remove item</span>
 
                   <svg
@@ -79,37 +111,16 @@ function formatCurrency(value: number) {
           </ul>
 
           <div class="mt-8 pt-8 border-t border-gray-100 flex justify-end">
-            <div class="max-w-lg w-screen space-y-4">
-              <dl class="text-sm space-y-0.5">
-                <div class="flex justify-between">
-                  <dt>Subtotal</dt>
-                  <dd>{{ formatCurrency(250) }}</dd>
-                </div>
-
-                <div class="flex justify-between">
-                  <dt>VAT</dt>
-                  <dd>{{ formatCurrency(25) }}</dd>
-                </div>
-
-                <div class="flex justify-between">
-                  <dt>Discount</dt>
-                  <dd>{{ formatCurrency(20) }}</dd>
-                </div>
-
-                <div class="font-medium flex justify-between !text-base">
-                  <dt>Total</dt>
-                  <dd>{{ formatCurrency(200) }}</dd>
-                </div>
-              </dl>
-
-              <div class="flex justify-end">
-                <el-button type="primary" plain>
-                  <RouterLink to="/checkout" class="text-sm px-5 py-3 rounded-sm block transition">
-                    Checkout
-                  </RouterLink>
-                </el-button>
-              </div>
+            <div class="font-medium flex gap-8 justify-between !text-base">
+              <span>Total</span>
+              <span class="text-red">{{ formatCurrency(total) }}</span>
             </div>
+          </div>
+
+          <div class="mt-6 flex justify-end">
+            <el-button type="primary" plain @click="checkout">
+              Checkout
+            </el-button>
           </div>
         </div>
       </div>
