@@ -24,13 +24,6 @@ defineOptions({
         />
       </div>
       <div class="mx-auto py-32 max-w-2xl lg:py-56 sm:py-48">
-        <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div class="text-sm/6 text-gray-400 px-3 py-1 rounded-full ring-1 ring-white/10 relative hover:ring-white/20">
-            Announcing our next round of funding. <a href="#" class="text-indigo-400 font-semibold"><span
-              aria-hidden="true" class="inset-0 absolute"
-            />Read more <span aria-hidden="true">&rarr;</span></a>
-          </div>
-        </div>
         <div class="text-center">
           <h1 class="text-5xl tracking-tight font-semibold text-balance sm:text-7xl">
             Data to enrich your
@@ -40,14 +33,6 @@ defineOptions({
             Anim aute id magna aliqua ad ad non
             deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
           </p>
-          <div class="mt-10 flex gap-x-6 items-center justify-center">
-            <a
-              href="#"
-              class="text-sm font-semibold px-3.5 py-2.5 rounded-md bg-indigo-500 shadow-xs focus-visible:outline-2 focus-visible:outline-indigo-500 focus-visible:outline-offset-2 hover:bg-indigo-400"
-            >Get
-              started</a>
-            <a href="#" class="text-sm/6 font-semibold">Learn more <span aria-hidden="true">→</span></a>
-          </div>
         </div>
       </div>
       <div
@@ -60,5 +45,11 @@ defineOptions({
         />
       </div>
     </div>
+
+    <!-- 热门、爆款商品 -->
+    <PopularProduct />
+
+    <!-- 新品 -->
+    <NewProduct />
   </div>
 </template>

@@ -10,7 +10,7 @@ const images = [
 // 产品信息
 const product = reactive({
   name: '限量版运动训练器',
-  price: '¥189.99',
+  price: '$189.99',
   isCart: false,
   rating: 4,
   reviewCount: 128,
