@@ -137,4 +137,14 @@ export default defineConfig({
     // TODO: workaround until they support native ESM
     noExternal: ['workbox-window', /vue-i18n/],
   },
+
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 })

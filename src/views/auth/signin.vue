@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
+import { emailLogin, login, sendEmailCode } from '~/api/user'
 import { generateCaptcha, renderCaptchaToDataURL } from '~/utils/captcha'
 
 const router = useRouter()
@@ -12,7 +13,6 @@ const form = reactive({
   captcha: '',
   emailCaptcha: '',
 })
-
 const captchaImg = ref(renderCaptchaToDataURL(generateCaptcha()))
 
 const formRef = useTemplateRef<FormInstance>('formRef')
@@ -37,14 +37,35 @@ function refreshCaptcha() {
   form.captcha = ''
 }
 
+function handleEmailLogin() {
+  emailLogin(form.email, form.emailCaptcha).then(() => {
+    router.push('/')
+  }).catch((err: any) => {
+    ElMessage.error(err.data.message)
+  }).finally(() => {
+    loading.value = false
+  })
+}
+
+function handlePasswordLogin() {
+  login(form).then(() => {
+    router.push('/')
+  }).catch((err: any) => {
+    ElMessage.error(err.data.message)
+  }).finally(() => {
+    loading.value = false
+  })
+}
 function handleSubmit() {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
-      setTimeout(() => {
-        loading.value = false
-        router.push('/')
-      }, 1000)
+      if (isEmailCaptcha.value) {
+        handleEmailLogin()
+      }
+      else {
+        handlePasswordLogin()
+      }
     }
     else {
       ElMessage.warning('表单有误，请检查输入项')
@@ -56,16 +77,38 @@ const countdown = ref(60)
 const senEmailCodeFlag = ref(false)
 let timer: ReturnType<typeof setInterval>
 
-function senEmailCode() {
-  senEmailCodeFlag.value = true
+function stopCountdown() {
+  clearInterval(timer)
+  countdown.value = 60
+  senEmailCodeFlag.value = false
+}
+
+function startCountdown() {
   timer = setInterval(() => {
     countdown.value--
     if (countdown.value === 0) {
-      clearInterval(timer)
-      countdown.value = 60
-      senEmailCodeFlag.value = false
+      stopCountdown()
     }
   }, 1000)
+}
+
+function senEmailCode() {
+  if (form.email === '') {
+    formRef.value?.validateField('email')
+    return
+  }
+  if (timer)
+    return
+  senEmailCodeFlag.value = true
+  startCountdown()
+
+  // 发送验证码到邮箱
+  sendEmailCode(form.email).then(() => {
+    ElMessage.success('验证码发送成功')
+  }).catch((err: any) => {
+    stopCountdown()
+    ElMessage.error(err.data.message)
+  })
 }
 
 function gotoForget() {
@@ -96,7 +139,10 @@ function gotoSignup() {
         </el-form-item>
         <el-form-item v-if="!isEmailCaptcha" label="验证码" prop="captcha">
           <div style="display: flex; gap: 8px; align-items: center">
-            <img class="captchaImg" :src="captchaImg" style="min-width:90px;cursor:pointer;" title="点击更换验证码" @click="refreshCaptcha">
+            <img
+              class="captchaImg" :src="captchaImg" style="min-width:90px;cursor:pointer;" title="点击更换验证码"
+              @click="refreshCaptcha"
+            >
             <el-input v-model="form.captcha" maxlength="6" placeholder="请输入验证码" autocomplete="off" style="flex:1" />
           </div>
         </el-form-item>

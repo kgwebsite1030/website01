@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
+import { register, sendEmailCode } from '~/api/user'
 
 const router = useRouter()
 const loading = ref(false)
@@ -7,6 +8,7 @@ const loading = ref(false)
 const form = reactive({
   email: '',
   captcha: '',
+  code: '',
   password: '',
   confirmPassword: '',
 })
@@ -35,14 +37,58 @@ const rules: Record<string, FormItemRule[]> = {
     },
   ],
 }
+
+const countdown = ref(60)
+const senEmailCodeFlag = ref(false)
+let timer: ReturnType<typeof setInterval>
+
+function stopCountdown() {
+  clearInterval(timer)
+  countdown.value = 60
+  senEmailCodeFlag.value = false
+}
+
+function startCountdown() {
+  timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value === 0) {
+      stopCountdown()
+    }
+  }, 1000)
+}
+
+function senEmailCode() {
+  if (form.email === '') {
+    formRef.value?.validateField('email')
+    return
+  }
+  if (timer)
+    return
+  senEmailCodeFlag.value = true
+  startCountdown()
+
+  // 发送验证码到邮箱
+  sendEmailCode(form.email).then((res) => {
+    ElMessage.success('验证码发送成功')
+    form.captcha = res.code
+    form.code = res.code
+  }).catch((err: any) => {
+    stopCountdown()
+    ElMessage.error(err.data.message)
+  })
+}
+
 function handleSubmit() {
   formRef.value!.validate((valid) => {
     if (valid) {
       loading.value = true
-      setTimeout(() => {
+      register(form).then(() => {
+        router.push('/')
+      }).catch((err: any) => {
+        ElMessage.error(err.data.message)
+      }).finally(() => {
         loading.value = false
-        gotoSignin()
-      }, 1000)
+      })
     }
     else {
       ElMessage.warning('表单有误，请检查输入项')
@@ -63,7 +109,12 @@ function gotoSignin() {
           <el-input v-model="form.email" placeholder="请输入邮箱" autocomplete="email" />
         </el-form-item>
         <el-form-item label="验证码" prop="captcha">
-          <el-input v-model="form.captcha" placeholder="请输入验证码" />
+          <el-input v-model="form.captcha" placeholder="请输入验证码">
+            <template #append>
+              <span v-if="!senEmailCodeFlag" @click="senEmailCode">发送邮箱验证码</span>
+              <span v-if="senEmailCodeFlag">{{ countdown }} s</span>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入密码" type="password" />
