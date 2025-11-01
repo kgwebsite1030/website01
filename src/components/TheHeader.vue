@@ -14,7 +14,7 @@ function toggleMenu() {
       <div class="flex lg:flex-1">
         <RouterLink to="/" class="p-1.5 -m-1.5">
           <span class="sr-only">Your Company</span>
-          <img :src="settings.companyLogo" alt="company log" class="h-8 w-auto">
+          <img :src="settings.companyLogo" alt="company log" class="h-8! w-auto">
         </RouterLink>
       </div>
       <div class="flex lg:hidden">
@@ -39,10 +39,15 @@ function toggleMenu() {
         </template>
       </div>
       <div class="gap-6 hidden lg:flex lg:flex-1 lg:justify-end">
-        <RouterLink to="/favorite" i-carbon-favorite />
-        <RouterLink to="/cart" i-carbon-shopping-cart />
+        <RouterLink to="/favorite">
+          <Icon icon="carbon-favorite" />
+        </RouterLink>
+        <RouterLink to="/cart">
+          <Icon icon="carbon-shopping-cart" />
+        </RouterLink>
+
         <ToggleLocale />
-        <ToggleTheme />
+        <!-- <ToggleTheme /> -->
         <RouterLink to="/auth/signin" class="text-sm/6 font-semibold">
           Log in <span aria-hidden="true">&rarr;</span>
         </RouterLink>

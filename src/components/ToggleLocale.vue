@@ -12,7 +12,8 @@ onMounted(async () => {
 })
 
 async function onChange(locale: string) {
-  if (currentLocale.value === locale) return
+  if (currentLocale.value === locale)
+    return
   currentLocale.value = locale
   await loadLanguageAsync(locale)
   localStorage.setItem('locale', locale)
@@ -22,14 +23,10 @@ async function onChange(locale: string) {
 <template>
   <div class="relative group">
     <!-- 触发器 -->
-    <button
-      type="button"
-      class="flex items-center gap-1.5 sm:text-sm focus:outline-none"
-      aria-label="Switch language"
-    >
-      <div class="i-carbon-language text-base" />
+    <button type="button" class="flex items-center gap-1.5 sm:text-sm focus:outline-none" aria-label="Switch language">
+      <Icon icon="carbon-language" class="text-base" />
       <span>{{ currentLocale }}</span>
-      <div class="i-heroicons-chevron-down-20-solid text-xs opacity-60" />
+      <div class=" i-heroicons-chevron-down-20-solid text-xs opacity-60" />
     </button>
 
     <!-- 下拉菜单 -->
@@ -38,12 +35,11 @@ async function onChange(locale: string) {
       role="menu"
     >
       <button
-        v-for="locale in availableLocales"
-        :key="locale"
-        class="w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700" :class="[
-          { 'font-medium bg-gray-100 dark:bg-gray-700': currentLocale === locale }
-        ]"
-        @click="onChange(locale)"
+        v-for="locale in availableLocales" :key="locale"
+        class="w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+        :class="[
+          { 'font-medium bg-gray-100 dark:bg-gray-700': currentLocale === locale },
+        ]" @click="onChange(locale)"
       >
         {{ locale }}
       </button>
