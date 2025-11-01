@@ -57,7 +57,7 @@ function toggleMenu() {
     <dialog :open="openMenu" class="backdrop:bg-transparent">
       <div tabindex="0" class="inset-0 fixed focus:outline-none">
         <div
-          class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto sm:max-w-sm sm:ring-1"
+          class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto dark:bg-gray-900 sm:max-w-sm sm:ring-1"
         >
           <div class="flex items-center justify-between">
             <a href="#" class="p-1.5 -m-1.5">
@@ -89,6 +89,7 @@ function toggleMenu() {
                   </RouterLink>
                 </template>
                 <ToggleLocale class="text-base/7 font-semibold px-3 py-2 rounded-lg block -mx-3" />
+                <ToggleTheme class="text-base/7 font-semibold px-3 py-2 rounded-lg block -mx-3" />
               </div>
               <div class="py-6">
                 <RouterLink to="/auth/signin" class="text-base/7 font-semibold px-3 py-2.5 rounded-lg block -mx-3">

@@ -31,12 +31,12 @@ async function onChange(locale: string) {
 
     <!-- 下拉菜单 -->
     <div
-      class="absolute z-10 mt-1 w-24 bg-white shadow-lg rounded-md py-1 text-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 ease-in-out origin-top"
+      class="absolute z-10 mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 text-sm text-gray-700 dark:text-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 ease-in-out origin-top"
       role="menu"
     >
       <button
         v-for="locale in availableLocales" :key="locale"
-        class="w-full text-left px-3 py-1.5 hover:bg-gray-100"
+        class="w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
         :class="[
           { 'font-medium bg-gray-100 dark:bg-gray-700': currentLocale === locale },
         ]" @click="onChange(locale)"
