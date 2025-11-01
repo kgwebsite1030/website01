@@ -99,7 +99,7 @@ const total = order.subtotal + order.shippingFee - order.discount
         </div>
       </header>
 
-      <div class="mt-8 gap-6 grid grid-cols-1 md:grid-cols-3">
+      <div class="mt-8 gap-6 grid grid-cols-1 md:grid-cols-2">
         <section class="p-5 border rounded-xl md:p-6">
           <h2 class="text-lg font-medium">
             Shipping Address
@@ -124,19 +124,6 @@ const total = order.subtotal + order.shippingFee - order.discount
               Paid At: {{ order.payment.paidAt }}
             </p>
           </div>
-        </section>
-
-        <section class="p-5 border rounded-xl md:p-6">
-          <h2 class="text-lg font-medium">
-            Logistics
-          </h2>
-          <div v-if="order.logistics" class="text-sm mt-3 space-y-1">
-            <p>Carrier: {{ order.logistics.company }}</p>
-            <p>Tracking No.: {{ order.logistics.trackingNo }}</p>
-          </div>
-          <p v-else class="text-sm mt-3">
-            No logistics information
-          </p>
         </section>
       </div>
 
