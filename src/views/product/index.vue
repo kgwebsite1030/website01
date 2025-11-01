@@ -1,7 +1,5 @@
 <script setup lang='ts'>
 import type { Category } from '~/components/CategoryTreeSelector/types'
-import { useRequest } from 'alova/client'
-import { getgoodlist } from '~/api/good'
 
 const selectedCategoryId = ref<string | number | null>(null)
 
@@ -25,15 +23,6 @@ const categories: Category[] = [
 ]
 
 const router = useRouter()
-
-const pageSize = reactive({
-  page: 1,
-  size: 20,
-})
-
-const { data } = useRequest(() => getgoodlist(pageSize))
-
-console.log(data)
 
 // 处理商品列表点击事件
 function handleProductListClick(event: MouseEvent) {
@@ -83,6 +72,4 @@ function handleProductListClick(event: MouseEvent) {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

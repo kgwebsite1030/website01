@@ -45,7 +45,3 @@ export function register(data: RegisterReques) {
 export function logout() {
   return http.post('/auth/logout')
 }
-
-/**
- * 获取商品列表
- */
