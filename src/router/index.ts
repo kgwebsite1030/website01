@@ -116,4 +116,24 @@ const router = createRouter({
   history: createWebHashHistory(),
 })
 
+const whiteList = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/product/detail', '/product', '/contact-us', '/favorite', '/cart', '/index']
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+
+  const isLogin = userStore.isLogin
+
+  if (whiteList.includes(to.path)) {
+    next()
+  }
+  else {
+    if (isLogin) {
+      next()
+    }
+    else {
+      next('/auth/signin')
+    }
+  }
+})
+
 export default router
