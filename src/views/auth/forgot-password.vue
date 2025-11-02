@@ -72,8 +72,11 @@ function gotoSignin() {
 </script>
 
 <template>
-  <div class="mx-auto mt-10 md:flex md:max-w-7xl md:items-center md:justify-center">
-    <div class="m-4 p-4 rounded shadow md:w-sm">
+  <div class="login_bg flex flex-1 items-center justify-center">
+    <div class="m-4 p-4 rounded bg-white opacity-90 shadow md:w-sm">
+      <h2 class="text-xl font-bold my-8 text-center">
+        重置密码
+      </h2>
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="form.email" placeholder="请输入邮箱" autocomplete="email" />

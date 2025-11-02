@@ -6,10 +6,10 @@
   <div class="mx-auto px-6 max-w-7xl">
     <main class="py-12 flex-1">
       <div class="mx-auto px-6 container">
-        <div class="text-sm text-gray-600 mb-8">
+        <!-- <div class="text-sm text-gray-600 mb-8">
           <a class="transition-colors hover:text-gray-900" data-discover="true" href="/">Home</a>
           <span class="mx-2">/</span><span class="text-gray-900 font-medium">Contact Us</span>
-        </div>
+        </div> -->
         <h1 class="text-2xl text-gray-800 font-medium mb-10">
           Contact Us
         </h1>
@@ -136,9 +136,9 @@
                     placeholder="Please enter your message here..." required="" rows="5"
                   />
                 </div>
-                <button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="submit">
+                <el-button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="primary" plain>
                   Send Message
-                </button>
+                </el-button>
               </form>
             </div>
           </div>
@@ -147,9 +147,10 @@
           <div class="rounded-lg bg-gray-100 aspect-[16/9] relative overflow-hidden">
             <div class="flex items-center inset-0 justify-center absolute">
               <div class="text-center">
-                <i class="fa-solid fa-map-marked-alt text-4xl text-gray-400 mb-4" />
+                <!-- <i class="fa-solid fa-map-marked-alt text-4xl text-gray-400 mb-4" /> -->
                 <p class="text-gray-600">
-                  Map view would appear here
+                  <!-- Map view would appear here -->
+                  <img src="/map.png" alt="">
                 </p>
               </div>
             </div>

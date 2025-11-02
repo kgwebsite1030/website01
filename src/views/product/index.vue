@@ -24,6 +24,15 @@ const categories: Category[] = [
   },
 ]
 
+const products = [
+  {
+    id: 1,
+    title: '限量版运动训练器',
+    price: 189.99,
+    cover: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1450&amp;q=80',
+  },
+]
+
 const router = useRouter()
 
 const pageSize = reactive({
@@ -74,8 +83,8 @@ function handleProductListClick(event: MouseEvent) {
           class="gap-4 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2"
           @click="handleProductListClick"
         >
-          <template v-for="_d in 7" :key="_d">
-            <ProductCard :product-id="_d" />
+          <template v-for="_d in products" :key="_d">
+            <ProductCard :product-id="_d.id" v-bind="_d" />
           </template>
         </div>
       </div>

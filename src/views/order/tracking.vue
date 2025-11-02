@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { formatUSDCurrency } from '~/utils/currency'
+import { formatCurrency } from '~/utils/currency'
 
 interface OrderItem {
   id: string
@@ -47,11 +47,6 @@ const orders: Order[] = [
     ],
   },
 ]
-
-function formatCurrency(value: number) {
-  return formatUSDCurrency('en', value)
-}
-
 const router = useRouter()
 
 function gotoOrderDetail(id: string) {
@@ -73,11 +68,7 @@ function gotoOrderDetail(id: string) {
 
       <div class="mt-6">
         <div class="gap-6 grid grid-cols-1 md:gap-8">
-          <article
-            v-for="order in orders"
-            :key="order.id"
-            class="p-5 border rounded-xl md:p-6"
-          >
+          <article v-for="order in orders" :key="order.id" class="p-5 border rounded-xl md:p-6">
             <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <div class="flex flex-wrap gap-3 items-center">
@@ -101,18 +92,18 @@ function gotoOrderDetail(id: string) {
                     {{ formatCurrency(order.total) }}
                   </p>
                 </div>
-                <button type="button" class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center" @click="gotoOrderDetail(order.id)">
+                <button
+                  type="button"
+                  class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center"
+                  @click="gotoOrderDetail(order.id)"
+                >
                   View Details
                 </button>
               </div>
             </header>
 
             <div class="mt-4 divide-y">
-              <div
-                v-for="item in order.items"
-                :key="item.id"
-                class="py-3 flex gap-4 items-start justify-between"
-              >
+              <div v-for="item in order.items" :key="item.id" class="py-3 flex gap-4 items-start justify-between">
                 <div class="min-w-0">
                   <p class="font-medium truncate">
                     {{ item.name }}

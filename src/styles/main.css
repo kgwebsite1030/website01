@@ -45,3 +45,7 @@ html.dark {
 .dark::view-transition-new(root) {
   z-index: 1;
 }
+
+.login_bg {
+  background: url('/bg.jpg') no-repeat center/cover;
+}

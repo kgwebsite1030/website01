@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatUSDCurrency } from '~/utils/currency'
+import { formatCurrency } from '~/utils/currency'
 
 interface OrderItem {
   id: string
@@ -70,10 +70,6 @@ const order: OrderDetail = {
     company: 'SF Express',
     trackingNo: 'SF123456789CN',
   },
-}
-
-function formatCurrency(value: number) {
-  return formatUSDCurrency('en', value)
 }
 
 const total = order.subtotal + order.shippingFee - order.discount
