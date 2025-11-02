@@ -5,10 +5,6 @@ interface pageSizeType {
   size: number
 }
 
-interface goodDetailType {
-  id: number
-}
-
 interface hotGoodType {
   limit: number
 }
@@ -20,7 +16,6 @@ interface newGoodType {
 interface subGoodType {
   page: number
   size: number
-  subId: number
 }
 
 interface parentGoodType {
@@ -34,8 +29,8 @@ export function getGoodList(data: pageSizeType = ({ page: 1, size: 20 })) {
 }
 
 // 获取商品的完整详情信息，包含分类、评论、规格等
-export function getGoodDetail(data: goodDetailType) {
-  return http.get('/products', data)
+export function getGoodDetail(id: number = 1) {
+  return http.get(`/products/${id}`)
 }
 
 // 获取爆火产品列表，根据评分和评论数排序
@@ -49,8 +44,8 @@ export function getNewGoodList(data: newGoodType = { limit: 10 }) {
 }
 
 // 点击子级分类标签时，返回该子级下的所有商品和父分类信息
-export function getSubGoods(data: subGoodType) {
-  return http.get('/products/sub-category', data)
+export function getSubGoods(data: subGoodType, subId: number = 1) {
+  return http.get(`/products/sub-category/${subId}`, data)
 }
 
 // 点击父级分类标签时，返回该子级下的所有商品和父分类信息

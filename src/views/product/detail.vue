@@ -3,14 +3,6 @@ import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { getGoodDetail } from '~/api/good'
 import { formatCurrency } from '~/utils/currency'
-// 产品图片数组
-const images = ['https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1450&q=80']
-
-// 产品信息
-const product = reactive({
-  name: '限量版运动训练器',
-  price: 189.99,
-})
 
 // 购买数量
 const quantity = ref(1)
@@ -21,10 +13,8 @@ function addToCart() {
 
 }
 
-const rid = 1
-
 // 获取商品详情
-const { data } = useRequest(() => getGoodDetail({ id: rid }))
+const { data }: any = useRequest(() => getGoodDetail(), { initialData: {}, immediate: true })
 
 console.log(data)
 </script>
@@ -34,16 +24,16 @@ console.log(data)
     <div class="flex flex-col gap-8 md:flex-row">
       <!-- 产品图片轮播区域 -->
       <!-- <Carousel :images /> -->
-      <img :src="images[0]" alt="productName" class="h-[400px] w-full transition-opacity duration-300 object-cover">
+      <img :src="data?.product?.imageUrl || ''" alt="productName" class="h-[400px] w-full transition-opacity duration-300 object-cover">
 
       <!-- 产品信息区域 -->
       <div class="flex flex-col w-full md:w-1/2">
         <div class="mb-6">
           <h1 class="text-3xl font-bold mb-2">
-            {{ product.name }}
+            {{ data?.product?.name }}
           </h1>
           <p class="text-2xl text-red font-bold">
-            {{ formatCurrency(product.price) }}
+            {{ formatCurrency(data?.product?.price) }}
           </p>
         </div>
 

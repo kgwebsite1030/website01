@@ -5,11 +5,11 @@ withDefaults(defineProps<{
   /**
    * 标题
    */
-  title: string
+  title?: string
   /**
    * 产品列表 todo 添加类型
    */
-  products: any[]
+  products?: any[]
 }>(), {
   products: () => [],
   title: 'Products',
@@ -29,15 +29,15 @@ withDefaults(defineProps<{
         <!-- todo 跳转到详情附上产品id -->
         <RouterLink to="#" class="group rounded-sm block shadow-sm overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1770&amp;q=80"
-            alt="" class="h-[250px] w-full transition duration-500 object-cover sm:h-[250px] group-hover:scale-105"
+            :src="product.imageUrl"
+            alt="" class="h-[180px] w-full transition duration-500 object-cover sm:h-[180px] group-hover:scale-105"
           >
 
           <div class="p-4 bg-white relative">
             <h3 class="text-gray-700 group-hover:underline group-hover:underline-offset-4">
               <i dir="auto" style="vertical-align: inherit;">
                 <i dir="auto" style="vertical-align: inherit;">
-                  {{ product.title }}
+                  {{ product.name }}
                 </i>
               </i>
             </h3>

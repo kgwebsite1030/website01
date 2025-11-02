@@ -12,48 +12,10 @@ defineOptions({
 // })
 
 // 获取热门商品数据
-const { data: hotGoodsData } = useRequest(() => getHotGoodList({ limit: 10 }))
+const { data: popularProducts } = useRequest(() => getHotGoodList({ limit: 10 }))
 
 // 获取新品数据
-const { data: newGoodsData } = useRequest(() => getNewGoodList({ limit: 10 }))
-
-const popularProducts: Ref<Product[]> = ref([
-
-  {
-    title: 'T-shirt',
-    price: 24,
-  },
-
-])
-
-interface Product {
-  title: string
-  price: number
-  // 根据实际字段调整
-}
-
-const newProducts: Ref<Product[]> = ref([
-
-  {
-    title: 'T-shirt',
-    price: 24,
-  },
-])
-
-// 监听数据变化
-watch(hotGoodsData, (newData: any) => {
-  if (newData) {
-    // 处理热门商品数据
-    popularProducts.value = newData?.list || []
-  }
-})
-
-watch(newGoodsData, (newData: any) => {
-  if (newData) {
-    // 处理新品数据
-    newProducts.value = newData?.list || []
-  }
-})
+const { data: newProducts } = useRequest(() => getNewGoodList({ limit: 10 }))
 </script>
 
 <template>
