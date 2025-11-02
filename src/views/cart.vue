@@ -5,12 +5,21 @@ import { getCartList, removeCart, updateCart } from '~/api/cart'
 import { formatCurrency } from '~/utils/currency'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const carts = ref<Cart[]>([])
 
 const total = ref(0)
 
-const { data: cartList } = useRequest(() => getCartList())
+const { data: cartList, send } = useRequest(() => getCartList(), {
+  immediate: false,
+})
+
+onMounted(() => {
+  if (userStore.isLogin) {
+    send()
+  }
+})
 
 watchEffect(() => {
   if (cartList.value) {
