@@ -1,6 +1,13 @@
-// types/category.ts
 export interface Category {
-  id: string | number
+  id: number | string
   name: string
-  children?: Category[]
+  slug?: string
+  description?: string
+  icon?: string | null
+  image?: string | null
+  sortOrder?: number
+  isActive?: boolean
+  isShow?: boolean
+  productCount?: number
+  subCategories?: Category[]
 }

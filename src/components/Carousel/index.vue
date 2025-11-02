@@ -2,7 +2,7 @@
 import { nextTick, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
-  images: string[]
+  images?: string[]
 }>(), {
   images: () => [],
 })

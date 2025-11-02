@@ -16,9 +16,11 @@ interface newGoodType {
 interface subGoodType {
   page: number
   size: number
+  subId: number
 }
 
 interface parentGoodType {
+  parentId: number
   page: number
   size: number
 }
@@ -44,12 +46,12 @@ export function getNewGoodList(data: newGoodType = { limit: 10 }) {
 }
 
 // 点击子级分类标签时，返回该子级下的所有商品和父分类信息
-export function getSubGoods(data: subGoodType, subId: number = 1) {
-  return http.get(`/products/sub-category/${subId}`, data)
+export function getSubGoods(data: subGoodType) {
+  return http.get(`/products/sub-category/${data.subId}`, data)
 }
 
 // 点击父级分类标签时，返回该子级下的所有商品和父分类信息
 
 export function getParentGoods(data: parentGoodType) {
-  return http.get('/products/parent-category/1', data)
+  return http.get(`/products/parent-category/${data.parentId}`, data)
 }
