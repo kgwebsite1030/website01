@@ -147,9 +147,10 @@
           <div class="rounded-lg bg-gray-100 aspect-[16/9] relative overflow-hidden">
             <div class="flex items-center inset-0 justify-center absolute">
               <div class="text-center">
-                <i class="fa-solid fa-map-marked-alt text-4xl text-gray-400 mb-4" />
+                <!-- <i class="fa-solid fa-map-marked-alt text-4xl text-gray-400 mb-4" /> -->
                 <p class="text-gray-600">
-                  Map view would appear here
+                  <!-- Map view would appear here -->
+                  <img src="/map.png" alt="">
                 </p>
               </div>
             </div>
