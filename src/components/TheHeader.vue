@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { settings } from '~/settings'
+import { useCartStore } from '~/stores/cart'
+
+const cartStore = useCartStore()
 
 const openMenu = ref(false)
 function toggleMenu() {
@@ -14,7 +17,7 @@ function toggleMenu() {
       <div class="flex lg:flex-1">
         <RouterLink to="/" class="p-1.5 -m-1.5">
           <span class="sr-only">Your Company</span>
-          <img :src="settings.companyLogo" alt="company log" class="h-8! w-auto">
+          <img :src="settings.companyLogo" alt="company log" class="w-auto h-8!">
         </RouterLink>
       </div>
       <div class="flex lg:hidden">
@@ -42,10 +45,15 @@ function toggleMenu() {
         <RouterLink to="/favorite">
           <Icon icon="carbon-favorite" />
         </RouterLink>
-        <RouterLink to="/cart">
+        <RouterLink to="/cart" class="relative">
           <Icon icon="carbon-shopping-cart" />
+          <span
+            v-if="cartStore.totalItems > 0"
+            class="text-[8px] text-white rounded-full bg-red-500 flex h-4 w-4 items-center justify-center absolute -right-2 -top-2"
+          >
+            {{ cartStore.totalItems }}
+          </span>
         </RouterLink>
-
         <ToggleLocale />
         <!-- <ToggleTheme /> -->
         <RouterLink to="/auth/signin" class="text-sm/6 font-semibold">
@@ -56,9 +64,7 @@ function toggleMenu() {
     <!-- 移动端菜单 -->
     <dialog :open="openMenu" class="backdrop:bg-transparent">
       <div tabindex="0" class="inset-0 fixed focus:outline-none">
-        <div
-          class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto sm:max-w-sm sm:ring-1"
-        >
+        <div class="p-6 bg-white w-full inset-y-0 right-0 fixed z-50 overflow-y-auto sm:max-w-sm sm:ring-1">
           <div class="flex items-center justify-between">
             <a href="#" class="p-1.5 -m-1.5">
               <span class="sr-only">Your Company</span>
