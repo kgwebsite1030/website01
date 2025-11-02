@@ -6,7 +6,7 @@ interface orderListType {
 }
 
 // 获取订单列表
-export function getOrderList(data: orderListType = { status: '' }) {
+export function getOrderList(data: orderListType = { status: 'PENDING' }) {
   return http.get('/order/list', data)
 }
 

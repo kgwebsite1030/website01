@@ -12,7 +12,7 @@ interface OrderItem {
 
 interface Order {
   id: string
-  createdAt: string
+  createTime: string
   status: 'processing' | 'shipped' | 'delivered' | 'cancelled'
   total: number
   items: OrderItem[]
@@ -21,7 +21,7 @@ interface Order {
 const orders: Order[] = [
   {
     id: 'ORD-20251001-0001',
-    createdAt: '2025-10-01 13:20',
+    createTime: '2025-10-01 13:20',
     status: 'delivered',
     total: 299.0,
     items: [
