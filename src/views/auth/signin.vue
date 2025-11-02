@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
+import { useRequest } from 'alova/client'
 import { emailLogin, login, sendEmailCode } from '~/api/user'
 import { generateCaptcha, renderCaptchaToDataURL } from '~/utils/captcha'
 
+const userSotore = useUserStore()
 const router = useRouter()
-const loading = ref(false)
 const isEmailCaptcha = ref(false)
+const _loading = ref(false)
 
 const form = reactive({
   email: '',
@@ -38,28 +40,26 @@ function refreshCaptcha() {
 }
 
 function handleEmailLogin() {
-  emailLogin(form.email, form.emailCaptcha).then(() => {
-    router.push('/')
-  }).catch((err: any) => {
-    ElMessage.error(err.data.message)
-  }).finally(() => {
-    loading.value = false
-  })
+  const { error, data, loading } = useRequest(() => emailLogin(form.email, form.emailCaptcha))
+  watchEffect(() => _loading.value = loading.value)
+  if (error) {
+    return ElMessage.error(error.value?.message)
+  }
+  loginSuccess(data)
 }
 
 function handlePasswordLogin() {
-  login(form).then(() => {
-    router.push('/')
-  }).catch((err: any) => {
-    ElMessage.error(err.data.message)
-  }).finally(() => {
-    loading.value = false
-  })
+  const { error, data, loading } = useRequest(() => login(form))
+  watchEffect(() => _loading.value = loading.value)
+  if (error) {
+    return ElMessage.error(error.value?.message)
+  }
+  loginSuccess(data)
 }
+
 function handleSubmit() {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
-      loading.value = true
       if (isEmailCaptcha.value) {
         handleEmailLogin()
       }
@@ -67,10 +67,14 @@ function handleSubmit() {
         handlePasswordLogin()
       }
     }
-    else {
-      ElMessage.warning('表单有误，请检查输入项')
-    }
   })
+}
+
+function loginSuccess(data: any) {
+  // 设置响应信息
+  userSotore.setUserInfo(data.user)
+  userSotore.setToken(data.token)
+  router.push('/')
 }
 
 const countdown = ref(60)
@@ -150,7 +154,7 @@ function gotoSignup() {
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button :loading="loading" style="width:100%" @click="handleSubmit">
+          <el-button :loading="_loading" style="width:100%" @click="handleSubmit">
             登录
           </el-button>
         </el-form-item>

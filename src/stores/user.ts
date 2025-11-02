@@ -1,33 +1,35 @@
+import type { User } from '~/api/types/user'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-export const useUserStore = defineStore('user', () => {
-  /**
-   * Current name of the user.
-   */
-  const savedName = ref('')
-  const previousNames = ref(new Set<string>())
+const defaultUserInfo = {
+  id: void 0,
+  email: '',
+} as User
 
-  const usedNames = computed(() => Array.from(previousNames.value))
-  const otherNames = computed(() => usedNames.value.filter(name => name !== savedName.value))
-
-  /**
-   * Changes the current name of the user and saves the one that was used
-   * before.
-   *
-   * @param name - new name to set
-   */
-  function setNewName(name: string) {
-    if (savedName.value)
-      previousNames.value.add(savedName.value)
-
-    savedName.value = name
-  }
-
-  return {
-    setNewName,
-    otherNames,
-    savedName,
-  }
+export const useUserStore = defineStore('user', {
+  state: () => {
+    return {
+      userInfo: defaultUserInfo,
+      token: '',
+    }
+  },
+  getters: {
+    isLogin(): boolean {
+      return !!this.token
+    },
+  },
+  actions: {
+    setUserInfo(user: User) {
+      this.userInfo = user
+    },
+    setToken(token: string) {
+      this.token = token
+    },
+    getToken() {
+      return this.token
+    },
+  },
+  persist: true,
 })
 
 if (import.meta.hot)
