@@ -13,8 +13,10 @@ function addToCart() {
 
 }
 
+const rid = useRoute().query.id
+
 // 获取商品详情
-const { data }: any = useRequest(() => getGoodDetail(), { initialData: {}, immediate: true })
+const { data }: any = useRequest(() => getGoodDetail(rid), { initialData: {}, immediate: true })
 
 console.log(data)
 </script>
