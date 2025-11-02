@@ -2,58 +2,11 @@
 import { useRequest } from 'alova/client'
 import { getHotGoodList, getNewGoodList } from '~/api/good'
 
-defineOptions({
-  name: 'IndexPage',
-})
-
-// const params = reactive({
-//   key: '513817480b6713e45eaa59c3037017db',
-//   id: '9872ed9fc22fc182',
-// })
-
 // 获取热门商品数据
 const { data: hotGoodsData } = useRequest(() => getHotGoodList({ limit: 10 }))
 
 // 获取新品数据
 const { data: newGoodsData } = useRequest(() => getNewGoodList({ limit: 10 }))
-
-const popularProducts: Ref<Product[]> = ref([
-
-  {
-    title: 'T-shirt',
-    price: 24,
-  },
-
-])
-
-interface Product {
-  title: string
-  price: number
-  // 根据实际字段调整
-}
-
-const newProducts: Ref<Product[]> = ref([
-
-  {
-    title: 'T-shirt',
-    price: 24,
-  },
-])
-
-// 监听数据变化
-watch(hotGoodsData, (newData: any) => {
-  if (newData) {
-    // 处理热门商品数据
-    popularProducts.value = newData?.list || []
-  }
-})
-
-watch(newGoodsData, (newData: any) => {
-  if (newData) {
-    // 处理新品数据
-    newProducts.value = newData?.list || []
-  }
-})
 </script>
 
 <template>
@@ -87,8 +40,8 @@ watch(newGoodsData, (newData: any) => {
       </template>
     </TowColContainer>
     <!-- 热门、爆款商品 -->
-    <DisplayProduct title="PopularProduct" :products="popularProducts" />
+    <DisplayProduct title="PopularProduct" :products="hotGoodsData" />
     <!-- 新品 -->
-    <DisplayProduct title="NewProduct" :products="newProducts" />
+    <DisplayProduct title="NewProduct" :products="newGoodsData" />
   </PageContainer>
 </template>
