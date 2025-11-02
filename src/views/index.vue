@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { getHotGoodList, getNewGoodList } from '~/api/good'
+
 defineOptions({
   name: 'IndexPage',
 })
@@ -8,17 +11,49 @@ defineOptions({
 //   id: '9872ed9fc22fc182',
 // })
 
-// const { data } = useRequest(() => getIndexCases(params), { immediately: true })
+// 获取热门商品数据
+const { data: hotGoodsData } = useRequest(() => getHotGoodList({ limit: 10 }))
 
-const popularProducts = [{
-  title: 'T-shirt',
-  price: 24,
-}]
+// 获取新品数据
+const { data: newGoodsData } = useRequest(() => getNewGoodList({ limit: 10 }))
 
-const newProducts = [{
-  title: 'T-shirt',
-  price: 24,
-}]
+const popularProducts: Ref<Product[]> = ref([
+
+  {
+    title: 'T-shirt',
+    price: 24,
+  },
+
+])
+
+interface Product {
+  title: string
+  price: number
+  // 根据实际字段调整
+}
+
+const newProducts: Ref<Product[]> = ref([
+
+  {
+    title: 'T-shirt',
+    price: 24,
+  },
+])
+
+// 监听数据变化
+watch(hotGoodsData, (newData: any) => {
+  if (newData) {
+    // 处理热门商品数据
+    popularProducts.value = newData?.list || []
+  }
+})
+
+watch(newGoodsData, (newData: any) => {
+  if (newData) {
+    // 处理新品数据
+    newProducts.value = newData?.list || []
+  }
+})
 </script>
 
 <template>

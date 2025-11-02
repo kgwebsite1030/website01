@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { Category } from '~/components/CategoryTreeSelector/types'
 import { useRequest } from 'alova/client'
-import { getgoodlist } from '~/api/good'
+import { getGoodList, getParentGoods, getSubGoods } from '~/api/good'
 
 const selectedCategoryId = ref<string | number | null>(null)
 
@@ -40,7 +40,16 @@ const pageSize = reactive({
   size: 20,
 })
 
-const { data } = useRequest(() => getgoodlist(pageSize))
+// 获取商品列表
+const { data } = useRequest(() => getGoodList(pageSize))
+
+// 点击子级分类标签时，返回该子级下的所有商品和父分类信息
+const { data: subGoodsData } = useRequest(() => getSubGoods({ page: 1, size: 10, subId: 10 }))
+
+// 点击父级分类标签时，返回该子级下的所有商品和父分类信息
+const { data: parentGoodsData } = useRequest(() => getParentGoods({ page: 1, size: 10 }))
+
+console.log(subGoodsData, parentGoodsData)
 
 console.log(data)
 

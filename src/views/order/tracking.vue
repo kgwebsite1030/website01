@@ -1,4 +1,6 @@
 <script setup lang='ts'>
+import { useRequest } from 'alova/client'
+import { getOrderList } from '~/api/order'
 import { formatCurrency } from '~/utils/currency'
 
 interface OrderItem {
@@ -48,6 +50,11 @@ const orders: Order[] = [
   },
 ]
 const router = useRouter()
+
+// 获取订单列表
+const { data } = useRequest(() => getOrderList())
+
+console.log(data)
 
 function gotoOrderDetail(id: string) {
   router.push({ path: '/order/detail', query: { id } })

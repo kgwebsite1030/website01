@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { getOrderDetail } from '~/api/order'
 import { formatCurrency } from '~/utils/currency'
 
 interface OrderItem {
@@ -73,6 +75,11 @@ const order: OrderDetail = {
 }
 
 const total = order.subtotal + order.shippingFee - order.discount
+
+// 获取订单详情
+const { data } = useRequest(() => getOrderDetail())
+
+console.log(data)
 </script>
 
 <template>

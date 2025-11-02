@@ -1,6 +1,8 @@
 <script setup lang='ts'>
+import { useRequest } from 'alova/client'
+import { ref } from 'vue'
+import { getGoodDetail } from '~/api/good'
 import { formatCurrency } from '~/utils/currency'
-
 // 产品图片数组
 const images = ['https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1450&q=80']
 
@@ -18,6 +20,13 @@ function addToCart() {
   // 这里可以添加实际的购物车逻辑
 
 }
+
+const rid = 1
+
+// 获取商品详情
+const { data } = useRequest(() => getGoodDetail({ id: rid }))
+
+console.log(data)
 </script>
 
 <template>
