@@ -10,8 +10,9 @@ export const alovaInstance = createAlova({
   timeout: 10000, // 设置超时时间
   // 请求拦截器
   beforeRequest: (method) => {
+    const userStore = useUserStore()
     // 添加认证 token
-    const token = localStorage.getItem('token')
+    const token = userStore.getToken()
     if (token) {
       method.config.headers = {
         ...method.config.headers,
@@ -22,13 +23,39 @@ export const alovaInstance = createAlova({
   // 响应拦截器
   responded: {
     onSuccess: async (response) => {
-      if (response.status >= 200 && response.status < 300) {
-        return response.data
+      const { message, data, code } = response.data
+
+      // satoken 登录失效的状态码有多个，需要后端统一返回401
+      if (code === 401) {
+        ElNotification({
+          title: 'Error',
+          message,
+          type: 'error',
+        })
       }
-      throw new Error(response.statusText)
+
+      // 异常捕获、参数效验、服务错误等等，给前端一个提示
+      if (code !== 200) {
+        ElNotification({
+          title: 'Error',
+          message,
+          type: 'error',
+        })
+      }
+
+      return data
     },
     onError: (error) => {
       console.error('请求错误:', error.message)
+
+      const message = error.message
+
+      ElNotification({
+        title: 'Error',
+        message,
+        type: 'error',
+      })
+
       throw error
     },
   },

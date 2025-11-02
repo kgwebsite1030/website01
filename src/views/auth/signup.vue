@@ -73,9 +73,8 @@ function senEmailCode() {
     form.captcha = res.code
     form.code = res.code
   }).catch((err: any) => {
-    stopCountdown()
     ElMessage.error(err.data.message)
-  })
+  }).finally(() => stopCountdown())
 }
 
 function handleSubmit() {
