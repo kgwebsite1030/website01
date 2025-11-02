@@ -27,7 +27,7 @@ withDefaults(defineProps<{
     <ul class="mt-8 gap-4 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
       <li v-for="product in products" :key="product.id">
         <!-- todo 跳转到详情附上产品id -->
-        <RouterLink to="#" class="group rounded-sm block shadow-sm overflow-hidden">
+        <RouterLink :to="`/product/detail?id=${product.id}`" class="group rounded-sm block shadow-sm overflow-hidden">
           <img
             :src="product.imageUrl"
             alt="" class="h-[180px] w-full transition duration-500 object-cover sm:h-[180px] group-hover:scale-105"
