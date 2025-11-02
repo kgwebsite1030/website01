@@ -14,8 +14,6 @@ export const alovaInstance = createAlova({
     // 添加认证 token
     const token = userStore.getToken()
 
-    console.log(token)
-
     if (token) {
       method.config.headers = {
         ...method.config.headers,
@@ -27,7 +25,6 @@ export const alovaInstance = createAlova({
   responded: {
     onSuccess: async (response) => {
       const { message, data, code } = response.data
-      console.log(message, data, code)
 
       // satoken 登录失效的状态码有多个，需要后端统一返回401
       if (code === 401) {
@@ -46,7 +43,6 @@ export const alovaInstance = createAlova({
           type: 'error',
         })
       }
-      console.log(1)
 
       return data
     },

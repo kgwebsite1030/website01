@@ -2,7 +2,7 @@
 import type { Product } from '~/types'
 import { formatCurrency } from '~/utils/currency'
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   /**
    * 标题
    */
@@ -15,8 +15,6 @@ const props = withDefaults(defineProps<{
   products: () => [],
   title: 'Products',
 })
-
-console.log(props.products)
 </script>
 
 <template>

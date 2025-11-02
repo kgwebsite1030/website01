@@ -69,8 +69,6 @@ async function fetchCartList() {
 
 // 提交订单
 async function handlePlaceOrder() {
-  console.log('shippingInfo: ', shippingInfo.value)
-
   try {
     // 验证收货信息表单
     await shippingFormRef.value?.validate()
@@ -88,8 +86,7 @@ async function handlePlaceOrder() {
 
     loading.value = true
     // TODO: 调用支付 API
-    createPayment(shippingInfo.value).then((res) => {
-      console.log('res: ', res)
+    createPayment(shippingInfo.value).then(() => {
       ElMessage.success('订单提交成功')
     }).catch((err) => {
       console.error('支付失败', err)

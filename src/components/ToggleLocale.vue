@@ -21,22 +21,22 @@ async function onChange(locale: string) {
 </script>
 
 <template>
-  <div class="relative group">
+  <div class="group relative">
     <!-- 触发器 -->
-    <button type="button" class="flex items-center gap-1.5 sm:text-sm focus:outline-none" aria-label="Switch language">
+    <button type="button" class="flex gap-1.5 items-center sm:text-sm focus:outline-none" aria-label="Switch language">
       <Icon icon="carbon-language" class="text-base" />
       <span>{{ currentLocale }}</span>
-      <div class=" i-heroicons-chevron-down-20-solid text-xs opacity-60" />
+      <div class="i-heroicons-chevron-down-20-solid text-xs opacity-60" />
     </button>
 
     <!-- 下拉菜单 -->
     <div
-      class="absolute z-10 mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 text-sm text-gray-700 dark:text-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 ease-in-out origin-top"
+      class="text-sm text-gray-700 mt-1 py-1 rounded-md bg-white opacity-0 w-24 invisible shadow-lg origin-top transition-opacity duration-200 ease-in-out absolute z-10 dark:text-gray-200 dark:bg-gray-800 group-hover:opacity-100 group-hover:visible"
       role="menu"
     >
       <button
         v-for="locale in availableLocales" :key="locale"
-        class="w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+        class="px-3 py-1.5 text-left w-full focus:bg-gray-100 hover:bg-gray-100 dark:focus:bg-gray-700 dark:hover:bg-gray-700"
         :class="[
           { 'font-medium bg-gray-100 dark:bg-gray-700': currentLocale === locale },
         ]" @click="onChange(locale)"

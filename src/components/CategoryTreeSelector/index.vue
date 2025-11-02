@@ -4,19 +4,27 @@ import type { Category } from './types'
 import CategoryNode from './CategoryNode.vue'
 
 // 接收分类数据
-defineProps<{
+const props = defineProps<{
   data: Category[]
+  modelValue?: string | number | null
 }>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', id: string | number | null): void
 }>()
 
-const selectedId = ref<string | number | null>(null)
+const selectedId = ref<string | number | null>(props.modelValue ?? null)
 
-function handleSelect(id: string | number) {
-  selectedId.value = id
-  emit('update:modelValue', id)
+// 监听外部传入的 modelValue 变化
+watch(() => props.modelValue, (newValue) => {
+  selectedId.value = newValue ?? null
+})
+
+function handleSelect(path: (string | number)[]) {
+  // 使用完整的路径作为唯一标识
+  const uniqueId = path.join('/')
+  selectedId.value = uniqueId
+  emit('update:modelValue', uniqueId)
 }
 </script>
 
@@ -24,13 +32,12 @@ function handleSelect(id: string | number) {
   <div class="mx-auto w-full">
     <div class="border rounded-lg shadow-sm overflow-hidden">
       <div class="max-h-[300px] overflow-y-auto md:max-h-[500px] sm:max-h-[400px]">
-        <CategoryNode
-          v-for="node in data"
-          :key="node.id"
-          :node="node"
-          :selected-id="selectedId"
-          @select="handleSelect"
-        />
+        <template v-for="node in data as Category[]" :key="node.id">
+          <CategoryNode
+            v-if="node.productCount && node.productCount > 0" :node="node" :selected-id="selectedId"
+            :path="[node.id]" @select="handleSelect"
+          />
+        </template>
       </div>
     </div>
   </div>

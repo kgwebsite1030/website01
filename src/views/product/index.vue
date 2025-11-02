@@ -1,37 +1,40 @@
 <script setup lang='ts'>
 import type { Category } from '~/components/CategoryTreeSelector/types'
-import { useRequest } from 'alova/client'
+import type { Product } from '~/types'
 import { getGoodList, getParentGoods, getSubGoods } from '~/api/good'
 
 const selectedCategoryId = ref<string | number | null>(null)
 
-const categories: Category[] = [
-  {
-    id: 1,
-    name: '电子产品',
-    children: [
-      { id: 9, name: 'iphone12' },
-      { id: 10, name: 'iphone16' },
-    ],
-  },
-  {
-    id: 6,
-    name: '服装',
-    children: [
-      { id: 7, name: '男装' },
-      { id: 8, name: '女装' },
-    ],
-  },
-]
+const categories = ref<Category[]>([])
 
-const products = [
-  {
-    id: 1,
-    title: '限量版运动训练器',
-    price: 189.99,
-    cover: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1450&amp;q=80',
-  },
-]
+const productList = ref<Product[]>([])
+
+// {
+//         "products": [
+//             {
+//                 "id": 1,
+//                 "name": "简约羽绒服",
+//                 "categoryId": 3,
+//                 "price": 140.0,
+//                 "originalPrice": 180.0,
+//                 "rating": 4.7,
+//                 "reviewCount": 120,
+//                 "imageUrl": "https://example.com/images/jacket.jpg",
+//                 "images": null,
+//                 "featured": true,
+//                 "freeShipping": true,
+//                 "description": "简约设计的羽绒服，保暖舒适",
+//                 "features": null,
+//                 "specifications": null
+//             },
+//         ],
+//         "pagination": {
+//             "page": 1,
+//             "size": 20,
+//             "total": 5,
+//             "totalPages": 1
+//         }
+//     },
 
 const router = useRouter()
 
@@ -41,17 +44,33 @@ const pageSize = reactive({
 })
 
 // 获取商品列表
-const { data } = useRequest(() => getGoodList(pageSize))
+getGoodList(pageSize).then((res) => {
+  const { products, categoryTree, pagination } = res
+  categories.value = categoryTree.parentCategories as Category[]
+  productList.value = products
+  pagination.value = pagination
+})
 
-// 点击子级分类标签时，返回该子级下的所有商品和父分类信息
-const { data: subGoodsData } = useRequest(() => getSubGoods({ page: 1, size: 10, subId: 10 }))
+function handleCategoryClick() {
+  const ids = selectedCategoryId.value?.toString().split('/')
 
-// 点击父级分类标签时，返回该子级下的所有商品和父分类信息
-const { data: parentGoodsData } = useRequest(() => getParentGoods({ page: 1, size: 10 }))
-
-console.log(subGoodsData, parentGoodsData)
-
-console.log(data)
+  if (ids?.length && ids.length < 2) {
+    // 获取父级分类下的所有商品
+    getParentGoods({ page: 1, size: 10, parentId: Number(ids[0]) }).then((res) => {
+      const { products, pagination } = res
+      productList.value = products
+      pagination.value = pagination
+    })
+  }
+  else {
+    // 获取子级分类下的所有商品
+    getSubGoods({ page: 1, size: 10, subId: Number(ids?.[1]) }).then((res) => {
+      const { products, pagination } = res
+      productList.value = products
+      pagination.value = pagination
+    })
+  }
+}
 
 // 处理商品列表点击事件
 function handleProductListClick(event: MouseEvent) {
@@ -83,7 +102,7 @@ function handleProductListClick(event: MouseEvent) {
       <!-- 左侧分类选择器 -->
       <div class="mb-6 flex-shrink-0 w-full lg:mb-0 lg:w-[250px]">
         <!-- 当前选中分类id === selectedCategoryId -->
-        <CategoryTreeSelector v-model="selectedCategoryId" :data="categories" />
+        <CategoryTreeSelector v-model="selectedCategoryId" :data="categories" @click="handleCategoryClick" />
       </div>
 
       <!-- 右侧商品列表 -->
@@ -92,8 +111,8 @@ function handleProductListClick(event: MouseEvent) {
           class="gap-4 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2"
           @click="handleProductListClick"
         >
-          <template v-for="_d in products" :key="_d">
-            <ProductCard :product-id="_d.id" v-bind="_d" />
+          <template v-for="_d in productList" :key="_d">
+            <ProductCard v-bind="_d" />
           </template>
         </div>
       </div>
