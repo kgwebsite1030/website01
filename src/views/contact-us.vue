@@ -11,12 +11,7 @@ function sendMessage() {
   if (sendList.name && sendList.email && sendList.subject) {
     ElNotification({
 
-      message: h('i', { style: 'color: teal' }, 'sccuess'),
-    })
-  }
-  else {
-    ElNotification({
-      message: h('i', { style: 'color: teal' }, 'failed'),
+      message: h('i', { style: 'color: teal' }, '表单提交成功'),
     })
   }
 }
@@ -134,31 +129,31 @@ function sendMessage() {
                   <div>
                     <label class="text-sm text-gray-700 mb-2 block">Your Name *</label><input
                       class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="name"
-                      placeholder="John Doe" type="text" :value="sendList.name"
+                      placeholder="John Doe" type="text" required :value="sendList.name"
                     >
                   </div>
                   <div>
                     <label class="text-sm text-gray-700 mb-2 block">Your Email *</label><input
                       class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="email"
-                      placeholder="john@example.com" type="email" :value="sendList.email"
+                      placeholder="john@example.com" type="email" required :value="sendList.email"
                     >
                   </div>
                 </div>
                 <div>
                   <label class="text-sm text-gray-700 mb-2 block">Subject</label><input
                     class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="subject"
-                    placeholder="How can we help you?" type="text" :value="sendList.subject"
+                    placeholder="How can we help you?" type="text" required :value="sendList.subject"
                   >
                 </div>
                 <div>
                   <label class="text-sm text-gray-700 mb-2 block">Message *</label><textarea
                     class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="message"
-                    placeholder="Please enter your message here..." required="" rows="5"
+                    placeholder="Please enter your message here..." required rows="5"
                   />
                 </div>
-                <el-button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="primary" plain @click="sendMessage">
+                <button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="submit" plain @click="sendMessage">
                   Send Message
-                </el-button>
+                </button>
               </form>
             </div>
           </div>
