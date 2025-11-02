@@ -19,8 +19,8 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    setUserInfo(user: User) {
-      this.userInfo = user
+    setUserInfo(user: User | null) {
+      this.userInfo = user || defaultUserInfo
     },
     setToken(token: string) {
       this.token = token

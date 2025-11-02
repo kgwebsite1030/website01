@@ -6,17 +6,20 @@ import VueHook from 'alova/vue'
 export const alovaInstance = createAlova({
   statesHook: VueHook,
   requestAdapter: xhrRequestAdapter(),
-  baseURL: import.meta.env.VITE_API_BASE_URL, // 设置基础 URL
+  baseURL: 'https://kostock.work/api', // 设置基础 URL
   timeout: 10000, // 设置超时时间
   // 请求拦截器
   beforeRequest: (method) => {
     const userStore = useUserStore()
     // 添加认证 token
     const token = userStore.getToken()
+
+    console.log(token)
+
     if (token) {
       method.config.headers = {
         ...method.config.headers,
-        Authorization: `Bearer ${token}`,
+        satoken: `${token}`,
       }
     }
   },
@@ -24,6 +27,7 @@ export const alovaInstance = createAlova({
   responded: {
     onSuccess: async (response) => {
       const { message, data, code } = response.data
+      console.log(message, data, code)
 
       // satoken 登录失效的状态码有多个，需要后端统一返回401
       if (code === 401) {
@@ -42,6 +46,7 @@ export const alovaInstance = createAlova({
           type: 'error',
         })
       }
+      console.log(1)
 
       return data
     },

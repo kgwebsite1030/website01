@@ -3,8 +3,13 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 export const useCartStore = defineStore('cart', {
   state: () => {
     return {
-      totalItems: 10,
+      totalItems: 0,
     }
+  },
+  actions: {
+    setTotalItems(totalItems: number) {
+      this.totalItems = totalItems
+    },
   },
 })
 

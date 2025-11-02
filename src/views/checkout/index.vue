@@ -1,37 +1,112 @@
 <script setup lang='ts'>
-import { ref } from 'vue'
+import type { FormInstance, FormItemRule } from 'element-plus'
+import type { Cart } from '~/api/types/cart'
+import type { PaymentRequest } from '~/api/types/payment'
+import { getCartList } from '~/api/cart'
+import { createPayment } from '~/api/payment'
 import OrderSummary from './components/OrderSummary.vue'
 import CreditOrDebitCard from './components/payment-method/CreditOrDebitCard.vue'
 
-const countries = [
-  'United States',
-  'China',
-  'Japan',
-  'Canada',
-  'Australia',
-  'Germany',
-  'France',
-]
-const shippingInfo = ref({
-  name: '',
-  email: '',
-  phone: '',
-  country: 'United States',
-  address: '',
-  city: '',
-  zip: '',
+const shippingInfo = ref<PaymentRequest>({
+  request_id: '',
+  amount: 0,
+  shippingAddress: '',
+  shippingCity: '',
+  shippingZipCode: '',
+  ShippingCountry: '',
+  contactPhone: '',
+  cardInfo: { number: '', expMonth: '', expYear: '', cvc: '', name: '' },
 })
-const paymentMethod = ref('card')
-const cardInfo = ref({ number: '', month: '', year: '', cvc: '', holder: '' })
 
-const orderItems = [
-  { img: '', name: 'Oversized Cardigan', price: 240, qty: 3 },
-  { img: '', name: 'Padded Jacket', price: 280, qty: 2 },
-]
+const shippingFormRef = useTemplateRef<FormInstance>('shippingFormRef')
+const cardFormRef = ref<{ validate: () => Promise<void>, resetFields: () => void } | null>(null)
 
-watchEffect(() => {
-  // eslint-disable-next-line no-console
-  console.log('cardInfo: ', cardInfo.value)
+const orderItems = ref<Cart[]>([])
+const loading = ref(false)
+const cartLoading = ref(false)
+
+// 表单校验规则
+const shippingRules: Record<string, FormItemRule[]> = {
+  'cardInfo.name': [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+  ],
+  'shippingAddress': [
+    { required: true, message: '请输入详细地址', trigger: 'blur' },
+  ],
+  'shippingCity': [
+    { required: true, message: '请输入城市', trigger: 'blur' },
+  ],
+  'shippingZipCode': [
+    { required: true, message: '请输入邮政编码', trigger: 'blur' },
+    { pattern: /^\d+$/, message: '邮政编码只能包含数字', trigger: 'blur' },
+  ],
+  'ShippingCountry': [
+    { required: true, message: '请选择国家', trigger: 'change' },
+  ],
+  'contactPhone': [
+    { required: true, message: '请输入联系电话', trigger: 'blur' },
+    { pattern: /^[\d\s\-+()]+$/, message: '联系电话格式不正确', trigger: 'blur' },
+  ],
+}
+
+// 获取购物车列表
+async function fetchCartList() {
+  try {
+    cartLoading.value = true
+    const res = await getCartList()
+    orderItems.value = res.items || []
+    // 计算总金额
+    shippingInfo.value.amount = res.totalPrice
+  }
+  catch (error) {
+    ElMessage.error('获取购物车列表失败')
+    console.error(error)
+  }
+  finally {
+    cartLoading.value = false
+  }
+}
+
+// 提交订单
+async function handlePlaceOrder() {
+  console.log('shippingInfo: ', shippingInfo.value)
+
+  try {
+    // 验证收货信息表单
+    await shippingFormRef.value?.validate()
+
+    // 验证卡片信息表单
+    if (cardFormRef.value) {
+      await cardFormRef.value.validate()
+    }
+
+    // 验证是否有订单项
+    if (orderItems.value.length === 0) {
+      ElMessage.warning('购物车为空，无法下单')
+      return
+    }
+
+    loading.value = true
+    // TODO: 调用支付 API
+    createPayment(shippingInfo.value).then((res) => {
+      console.log('res: ', res)
+      ElMessage.success('订单提交成功')
+    }).catch((err) => {
+      console.error('支付失败', err)
+      ElMessage.error('支付失败')
+    })
+  }
+  catch (error) {
+    console.error('表单验证失败', error)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+// 页面加载时获取购物车列表
+onMounted(() => {
+  fetchCartList()
 })
 </script>
 
@@ -48,71 +123,37 @@ watchEffect(() => {
           <h3 class="text-lg font-semibold mb-4">
             Shipping Information
           </h3>
-          <form class="space-y-4">
+          <el-form ref="shippingFormRef" :model="shippingInfo" :rules="shippingRules" label-position="top">
             <div class="gap-4 grid md:grid-cols-2">
-              <div>
-                <label class="text-sm font-medium">Full Name <span class="text-red-500">*</span></label>
-                <input
-                  v-model="shippingInfo.name" type="text" placeholder="John Doe"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  required
-                >
-              </div>
-              <div>
-                <label class="text-sm font-medium">Email <span class="text-red-500">*</span></label>
-                <input
-                  v-model="shippingInfo.email" type="email" placeholder="john@example.com"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  required
-                >
-              </div>
-              <div>
-                <label class="text-sm font-medium">Phone <span class="text-red-500">*</span></label>
-                <input
-                  v-model="shippingInfo.phone" type="tel" placeholder="+1 (555) 123-4567"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  required
-                >
-              </div>
-              <div>
-                <label class="text-sm font-medium">Country <span class="text-red-500">*</span></label>
-                <select
-                  v-model="shippingInfo.country"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                >
-                  <option v-for="c in countries" :key="c" :value="c">
-                    {{ c }}
-                  </option>
-                </select>
-              </div>
+              <el-form-item label="Full Name" prop="cardInfo.name">
+                <el-input v-model="shippingInfo.cardInfo.name" placeholder="John Doe" />
+              </el-form-item>
+              <el-form-item label="Phone" prop="contactPhone">
+                <el-input v-model="shippingInfo.contactPhone" type="tel" placeholder="+1 (555) 123-4567" />
+              </el-form-item>
             </div>
-            <div>
-              <label class="text-sm font-medium">Address <span class="text-red-500">*</span></label>
-              <input
-                v-model="shippingInfo.address" type="text" placeholder="Enter detailed shipping address"
-                class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                required
-              >
-            </div>
+            <el-form-item label="Address" prop="shippingAddress">
+              <el-input v-model="shippingInfo.shippingAddress" placeholder="Enter detailed shipping address" />
+            </el-form-item>
             <div class="gap-4 grid md:grid-cols-2">
-              <div>
-                <label class="text-sm font-medium">City <span class="text-red-500">*</span></label>
-                <input
-                  v-model="shippingInfo.city" type="text" placeholder="New York"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  required
-                >
-              </div>
-              <div>
-                <label class="text-sm font-medium">ZIP Code <span class="text-red-500">*</span></label>
-                <input
-                  v-model="shippingInfo.zip" type="text" placeholder="10001"
-                  class="text-sm mt-1 px-4 py-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  required
-                >
-              </div>
+              <el-form-item label="City" prop="shippingCity">
+                <el-input v-model="shippingInfo.shippingCity" placeholder="New York" />
+              </el-form-item>
+              <el-form-item label="ZIP Code" prop="shippingZipCode">
+                <el-input v-model="shippingInfo.shippingZipCode" placeholder="10001" />
+              </el-form-item>
             </div>
-          </form>
+            <el-form-item label="Country" prop="ShippingCountry">
+              <el-select v-model="shippingInfo.ShippingCountry" placeholder="请选择国家">
+                <el-option label="United States" value="United States" />
+                <el-option label="Canada" value="Canada" />
+                <el-option label="United Kingdom" value="United Kingdom" />
+                <el-option label="Australia" value="Australia" />
+                <el-option label="New Zealand" value="New Zealand" />
+                <el-option label="Other" value="Other" />
+              </el-select>
+            </el-form-item>
+          </el-form>
         </section>
 
         <!-- 支付方式 -->
@@ -121,39 +162,27 @@ watchEffect(() => {
             Payment Method
           </h3>
           <div class="space-y-4">
-            <div
-              class="px-4 py-2 border border-indigo-500 rounded flex cursor-pointer items-center"
-            >
-              <input v-model="paymentMethod" type="radio" class="mr-3" value="card">
-              <div class="flex flex-wrap gap-2 items-center">
-                <img
-                  src="https://static.thenounproject.com/png/3309235-200.png" class="h-6 w-8 object-contain"
-                  alt="visa"
-                >
-                <img
-                  src="https://static.thenounproject.com/png/3309237-200.png" class="h-6 w-8 object-contain"
-                  alt="mastercard"
-                >
-                <img
-                  src="https://static.thenounproject.com/png/3309236-200.png" class="h-6 w-8 object-contain"
-                  alt="amex"
-                >
-                <span class="text-sm ml-2">Credit / Debit Card</span>
-              </div>
+            <div class="px-4 py-2 border border-indigo-500 rounded flex cursor-pointer items-center">
+              <span class="text-sm ml-2">Credit / Debit Card</span>
             </div>
           </div>
 
           <!-- 卡支付表单，仅选中卡时显示 -->
-          <CreditOrDebitCard v-if="paymentMethod === 'card'" v-model="cardInfo" />
+          <CreditOrDebitCard ref="cardFormRef" v-model="shippingInfo.cardInfo" />
         </section>
       </div>
 
       <!-- 右侧内容：订单摘要 -->
-      <OrderSummary :orders="orderItems" />
+      <OrderSummary :orders="orderItems" :loading="cartLoading" />
     </div>
 
     <div class="mt-10 w-full md:pr-10 md:w-2/3">
-      <el-button type="primary" class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700">
+      <el-button
+        type="primary"
+        :loading="loading"
+        class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700"
+        @click="handlePlaceOrder"
+      >
         Place Order
       </el-button>
     </div>

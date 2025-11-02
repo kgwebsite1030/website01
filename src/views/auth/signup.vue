@@ -82,7 +82,7 @@ function handleSubmit() {
     if (valid) {
       loading.value = true
       register(form).then(() => {
-        router.push('/')
+        router.push('/auth/signin')
       }).catch((err: any) => {
         ElMessage.error(err.data.message)
       }).finally(() => {

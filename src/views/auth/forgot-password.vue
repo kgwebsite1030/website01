@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
+import { resetPassword, sendEmailCode } from '~/api/user'
 
 const router = useRouter()
 const loading = ref(false)
@@ -39,10 +40,12 @@ function handleSubmit() {
   formRef.value!.validate((valid) => {
     if (valid) {
       loading.value = true
-      setTimeout(() => {
-        loading.value = false
+      resetPassword(form.email, form.captcha).then((res) => {
+        ElMessage.success(res.message)
         gotoSignin()
-      }, 1000)
+      }).finally(() => {
+        loading.value = false
+      })
     }
     else {
       ElMessage.warning('表单有误，请检查输入项')
@@ -54,16 +57,38 @@ const countdown = ref(60)
 const senEmailCodeFlag = ref(false)
 let timer: ReturnType<typeof setInterval>
 
-function senEmailCode() {
-  senEmailCodeFlag.value = true
+function stopCountdown() {
+  clearInterval(timer)
+  countdown.value = 60
+  senEmailCodeFlag.value = false
+}
+
+function startCountdown() {
   timer = setInterval(() => {
     countdown.value--
     if (countdown.value === 0) {
-      clearInterval(timer)
-      countdown.value = 60
-      senEmailCodeFlag.value = false
+      stopCountdown()
     }
   }, 1000)
+}
+
+function senEmailCode() {
+  if (form.email === '') {
+    formRef.value?.validateField('email')
+    return
+  }
+  if (timer)
+    return
+  senEmailCodeFlag.value = true
+  startCountdown()
+
+  // 发送验证码到邮箱
+  sendEmailCode(form.email).then(() => {
+    ElMessage.success('验证码发送成功')
+  }).catch((err: any) => {
+    stopCountdown()
+    ElMessage.error(err.data.message)
+  })
 }
 
 function gotoSignin() {

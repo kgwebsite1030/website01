@@ -82,12 +82,24 @@ export default defineConfig({
     noExternal: ['workbox-window', /vue-i18n/],
   },
 
+  // server: {
+  //   proxy: {
+  //     '/api': {
+  //       target: 'https://kostock.work/api',
+  //       changeOrigin: true,
+  //       rewrite: path => path.replace(/^\/api/, ''),
+  //     },
+  //   },
+  // },
+
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
+        // mock代理目标地址
+        target: 'https://kostock.work/api',
+        ws: true,
       },
     },
   },

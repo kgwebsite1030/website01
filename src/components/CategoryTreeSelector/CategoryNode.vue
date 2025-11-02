@@ -44,7 +44,7 @@ function handleSelect(id: string | number) {
             'rotate-90': !isExpanded,
             'rotate-0': isExpanded,
           }"
-          class=" h-3 w-3 transition-transform duration-200 sm:h-4 sm:w-4"
+          class="h-3 w-3 transition-transform duration-200 sm:h-4 sm:w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

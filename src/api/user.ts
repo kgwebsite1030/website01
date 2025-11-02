@@ -27,6 +27,16 @@ export function login(data: LoginRequest) {
 }
 
 /**
+ * 重置密码
+ */
+export function resetPassword(email: string, code: string) {
+  return http.post('/auth/resetPassword', {
+    email,
+    code,
+  })
+}
+
+/**
  * 邮箱验证码登录
  */
 export function emailLogin(email: string, code: string) {

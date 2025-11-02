@@ -1,12 +1,28 @@
 <script setup lang="ts">
+import { logout } from '~/api/user'
 import { settings } from '~/settings'
 import { useCartStore } from '~/stores/cart'
+import { useUserStore } from '~/stores/user'
 
 const cartStore = useCartStore()
+const userStore = useUserStore()
 
 const openMenu = ref(false)
 function toggleMenu() {
   openMenu.value = !openMenu.value
+}
+
+function handleLogout() {
+  ElMessageBox.confirm('确定退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    logout().then(() => {
+      userStore.setToken('')
+      userStore.setUserInfo(null)
+    })
+  })
 }
 </script>
 
@@ -56,9 +72,12 @@ function toggleMenu() {
         </RouterLink>
         <ToggleLocale />
         <!-- <ToggleTheme /> -->
-        <RouterLink to="/auth/signin" class="text-sm/6 font-semibold">
+        <RouterLink v-if="!userStore.isLogin" to="/auth/signin" class="text-sm/6 font-semibold">
           Log in <span aria-hidden="true">&rarr;</span>
         </RouterLink>
+        <div v-else class="text-sm/6 font-semibold" @click="handleLogout">
+          Log out <span aria-hidden="true">&rarr;</span>
+        </div>
       </div>
     </nav>
     <!-- 移动端菜单 -->

@@ -1,47 +1,48 @@
 <script setup lang='ts'>
+import type { Cart } from '~/api/types/cart'
+import { useRequest } from 'alova/client'
+import { getCartList, removeCart, updateCart } from '~/api/cart'
 import { formatCurrency } from '~/utils/currency'
 
 const router = useRouter()
 
-const carts = ref([
-  {
-    id: 1,
-    title: 'Basic Tee 6-Pack',
-    skus: [{ size: 'xxl' }],
-    price: 32,
-    count: 1,
-    cover: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=830&amp;q=80',
-  },
-])
+const carts = ref<Cart[]>([])
 
-const total = computed(() => {
-  return carts.value.reduce((prev, curr) => prev += (curr.count * curr.price), 0)
+const total = ref(0)
+
+const { data: cartList } = useRequest(() => getCartList())
+
+watchEffect(() => {
+  if (cartList.value) {
+    carts.value = cartList.value.items
+    total.value = cartList.value.totalPrice
+  }
 })
 
 /**
  * 商品数量被改变
  */
 function handleChangeQty(_item: any) {
-  console.log('qty', _item)
+  const { id, productId, quantity } = _item
+  updateCart(id, productId, quantity)
 }
 
 /**
  * 移除商品
  */
 function handleRemove(_item: any) {
-  console.log('remove', _item)
+  const { id } = _item
+  removeCart(id)
 }
 
 /**
  * 结算
  */
 function checkout() {
-  console.log('checkout')
   // 1、生成选中的商品id集合
   // 2、发送后端生成订单信息
-  const orderId = 1
   // 3、携带订单id跳转至结算页
-  router.push({ path: '/checkout', query: { orderId } })
+  router.push({ path: '/checkout' })
 }
 </script>
 
@@ -58,25 +59,12 @@ function checkout() {
         <div class="mt-8">
           <ul class="space-y-4">
             <li v-for="item in carts" :key="item.id" class="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center">
-              <img :src="item.cover" alt="" class="rounded-sm size-14 object-cover sm:size-16">
+              <img :src="item.imageUrl" alt="" class="rounded-sm size-14 object-cover sm:size-16">
 
               <div class="flex-1 w-full">
                 <h3 class="text-sm sm:text-base">
-                  {{ item.title }}
+                  {{ item.productName }}
                 </h3>
-
-                <dl class="space-y-px] mt-0.5">
-                  <div v-for="(sku, idx) in item.skus" :key="idx">
-                    <template v-for="(val, key) in sku" :key="key">
-                      <dt class="inline">
-                        {{ key }}:
-                      </dt>
-                      <dd class="inline">
-                        {{ val }}
-                      </dd>
-                    </template>
-                  </div>
-                </dl>
 
                 <span class="text-sm text-red">
                   {{ formatCurrency(item.price) }}
@@ -87,7 +75,7 @@ function checkout() {
                 <form class="flex items-center">
                   <label for="Line1Qty" class="sr-only"> Quantity </label>
                   <el-input-number
-                    id="Line1Qty" v-model="item.count" type="number" :min="1" :max="99" size="small"
+                    id="Line1Qty" v-model="item.quantity" type="number" :min="1" :max="99" size="small"
                     class="text-xs p-0 text-center rounded-sm h-9 w-16 [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:outline-hidden sm:h-8 sm:w-12"
                     @change="handleChangeQty(item)"
                   />
@@ -118,7 +106,7 @@ function checkout() {
           </div>
 
           <div class="mt-6 flex justify-end">
-            <el-button type="primary" plain @click="checkout">
+            <el-button type="primary" plain :disabled="carts.length === 0" @click="checkout">
               Checkout
             </el-button>
           </div>

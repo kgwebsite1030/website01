@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FormInstance, FormItemRule } from 'element-plus'
-import { useRequest } from 'alova/client'
 import { emailLogin, login, sendEmailCode } from '~/api/user'
 import { generateCaptcha, renderCaptchaToDataURL } from '~/utils/captcha'
 
@@ -10,8 +9,8 @@ const isEmailCaptcha = ref(false)
 const _loading = ref(false)
 
 const form = reactive({
-  email: '',
-  password: '',
+  email: 'londontunrbw@gmail.com',
+  password: '12345678',
   captcha: '',
   emailCaptcha: '',
 })
@@ -39,32 +38,18 @@ function refreshCaptcha() {
   form.captcha = ''
 }
 
-function handleEmailLogin() {
-  const { error, data, loading } = useRequest(() => emailLogin(form.email, form.emailCaptcha))
-  watchEffect(() => _loading.value = loading.value)
-  if (error) {
-    return ElMessage.error(error.value?.message)
-  }
-  loginSuccess(data)
-}
-
-function handlePasswordLogin() {
-  const { error, data, loading } = useRequest(() => login(form))
-  watchEffect(() => _loading.value = loading.value)
-  if (error) {
-    return ElMessage.error(error.value?.message)
-  }
-  loginSuccess(data)
-}
-
 function handleSubmit() {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
       if (isEmailCaptcha.value) {
-        handleEmailLogin()
+        emailLogin(form.email, form.emailCaptcha).then((res) => {
+          loginSuccess(res)
+        })
       }
       else {
-        handlePasswordLogin()
+        login(form).then((res) => {
+          loginSuccess(res)
+        })
       }
     }
   })

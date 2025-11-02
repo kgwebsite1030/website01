@@ -9,7 +9,6 @@ export const preferredDark = usePreferredDark()
  * @see https://github.com/vuejs/vitepress/pull/2347
  */
 export function toggleDark(event: MouseEvent) {
-
   // 判断客户端是否支持
   // @ts-expect-error experimental API
   const isAppearanceTransition = document.startViewTransition
