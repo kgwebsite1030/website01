@@ -7,6 +7,8 @@ import { createPayment } from '~/api/payment'
 import OrderSummary from './components/OrderSummary.vue'
 import CreditOrDebitCard from './components/payment-method/CreditOrDebitCard.vue'
 
+const router = useRouter()
+
 const shippingInfo = ref<PaymentRequest>({
   request_id: '',
   amount: 0,
@@ -85,16 +87,15 @@ async function handlePlaceOrder() {
     }
 
     loading.value = true
-    // TODO: 调用支付 API
-    createPayment(shippingInfo.value).then(() => {
-      ElMessage.success('订单提交成功')
-    }).catch((err) => {
-      console.error('支付失败', err)
-      ElMessage.error('支付失败')
+    createPayment(shippingInfo.value).then((res) => {
+      if (res.success) {
+        ElMessage.success('订单提交成功')
+        router.push({ path: '/order/detail', query: { id: res.order_id } })
+      }
+      else {
+        ElMessage.error(res.message)
+      }
     })
-  }
-  catch (error) {
-    console.error('表单验证失败', error)
   }
   finally {
     loading.value = false
@@ -175,8 +176,7 @@ onMounted(() => {
 
     <div class="mt-10 w-full md:pr-10 md:w-2/3">
       <el-button
-        type="primary"
-        :loading="loading"
+        type="primary" :loading="loading"
         class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700"
         @click="handlePlaceOrder"
       >

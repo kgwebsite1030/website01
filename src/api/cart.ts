@@ -15,14 +15,14 @@ export function getCartList() {
  * 添加到购物车
  */
 export function addToCart(productId: number, quantity: number) {
-  return http.post('/cart/add', { productId, quantity })
+  return http.post(`/cart/add?productId=${productId}&quantity=${quantity}`)
 }
 
 /**
  * 更新购物车中某个商品数量
  */
-export function updateCart(cartId: number, productId: number, quantity: number) {
-  return http.put(`/cart/update/${cartId}`, { productId, quantity })
+export function updateCart(cartId: number, quantity: number) {
+  return http.put(`/cart/update/${cartId}`, { quantity })
 }
 
 /**

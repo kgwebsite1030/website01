@@ -1,24 +1,35 @@
 <script setup lang='ts'>
 import { useRequest } from 'alova/client'
 import { ref } from 'vue'
+import { addToCart } from '~/api/cart'
 import { getGoodDetail } from '~/api/good'
+import { useUserStore } from '~/stores/user'
 import { formatCurrency } from '~/utils/currency'
+
+const userStore = useUserStore()
 
 // 购买数量
 const quantity = ref(1)
+const route = useRoute()
+const router = useRouter()
+
+const productId = route.query.id as unknown as number
 
 // 添加到购物车
-function addToCart() {
+function addCart() {
   // 这里可以添加实际的购物车逻辑
-
+  if (userStore.isLogin) {
+    addToCart(productId, quantity.value).then(() => {
+      ElMessage.success('添加购物车成功')
+    })
+  }
+  else {
+    router.push({ path: '/auth/signin' })
+  }
 }
 
-const rid = useRoute().query.id
-
 // 获取商品详情
-const { data }: any = useRequest(() => getGoodDetail(rid), { initialData: {}, immediate: true })
-
-console.log(data)
+const { data }: any = useRequest(() => getGoodDetail(productId), { immediate: true })
 </script>
 
 <template>
@@ -44,20 +55,14 @@ console.log(data)
           <!-- 数量 -->
           <el-input-number v-model="quantity" :min="1" :max="99" />
           <!-- 添加购物车 -->
-          <el-popover
-            placement="bottom" title="Tip" :width="200" trigger="click"
-            content="Already added to shopping cart."
+          <el-button
+            class="text-white font-medium px-6 py-2 rounded-md bg-indigo-600 flex flex-1 gap-2 transition-colors hover:bg-indigo-700"
+            @click="addCart"
           >
-            <template #reference>
-              <el-button
-                class="text-white font-medium px-6 py-2 rounded-md bg-indigo-600 flex flex-1 gap-2 transition-colors hover:bg-indigo-700"
-                @click="addToCart"
-              >
-                <div class="i-carbon-shopping-cart mr-2" />
-                Add Cart
-              </el-button>
-            </template>
-          </el-popover>
+            <div class="i-carbon-shopping-cart mr-2" />
+            Add Cart
+          </el-button>
+
           <!-- 收藏 -->
           <div class="p-2 cursor-pointer hover:text-red">
             <div class="i-carbon-favorite text-xl" />

@@ -19,7 +19,7 @@ export interface PaymentRequest {
 
 export interface PaymentResponse {
   success: boolean
-  message: string | null
+  message: string
   request_id: string
   order_id: string
   product_action: string

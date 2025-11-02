@@ -1,47 +1,59 @@
 <script setup lang='ts'>
 import type { Cart } from '~/api/types/cart'
-import { useRequest } from 'alova/client'
-import { getCartList, removeCart, updateCart } from '~/api/cart'
+import { clearCart, getCartList, removeCart, updateCart } from '~/api/cart'
 import { formatCurrency } from '~/utils/currency'
 
 const router = useRouter()
-const userStore = useUserStore()
 
 const carts = ref<Cart[]>([])
-
 const total = ref(0)
 
-const { data: cartList, send } = useRequest(() => getCartList(), {
-  immediate: false,
+getCartList().then((res) => {
+  carts.value = res.items
+  total.value = res.totalPrice
 })
 
-onMounted(() => {
-  if (userStore.isLogin) {
-    send()
-  }
-})
+const totalPrice = computed(() => carts.value.reduce((sum, item) => sum + item.price * item.quantity, 0))
 
-watchEffect(() => {
-  if (cartList.value) {
-    carts.value = cartList.value.items
-    total.value = cartList.value.totalPrice
-  }
-})
+const debouncedHandleChangeQty = useDebounceFn(handleChangeQty, 3000)
 
 /**
  * 商品数量被改变
  */
-function handleChangeQty(_item: any) {
-  const { id, productId, quantity } = _item
-  updateCart(id, productId, quantity)
+function handleChangeQty(_item: Cart) {
+  // 多次点击只发起最后一次点击的请求
+  // todo 需要优化 _item中没有cartId
+  const { id, quantity } = _item
+  updateCart(id, quantity).then((_res) => {
+    // todo
+  })
 }
 
 /**
  * 移除商品
  */
-function handleRemove(_item: any) {
+function handleRemove(_item: Cart) {
+  // todo 需要优化 _item中没有cartId
   const { id } = _item
-  removeCart(id)
+  removeCart(id).then(() => {
+    carts.value = carts.value.filter(item => item.id !== id)
+  })
+}
+
+/**
+ * 清空购物车
+ */
+function handleClearCart() {
+  ElMessageBox.confirm('确定清空购物车吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    clearCart().then(() => {
+      ElMessage.success('清空购物车成功')
+      carts.value = []
+    })
+  })
 }
 
 /**
@@ -64,7 +76,12 @@ function checkout() {
             Your Cart
           </h1>
         </header>
-
+        <div>
+          <el-button type="primary" plain :disabled="carts.length === 0" @click="handleClearCart">
+            Clear Cart All
+            Products
+          </el-button>
+        </div>
         <div class="mt-8">
           <ul class="space-y-4">
             <li v-for="item in carts" :key="item.id" class="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center">
@@ -86,7 +103,7 @@ function checkout() {
                   <el-input-number
                     id="Line1Qty" v-model="item.quantity" type="number" :min="1" :max="99" size="small"
                     class="text-xs p-0 text-center rounded-sm h-9 w-16 [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:outline-hidden sm:h-8 sm:w-12"
-                    @change="handleChangeQty(item)"
+                    @change="debouncedHandleChangeQty(item)"
                   />
                 </form>
 
@@ -110,7 +127,7 @@ function checkout() {
           <div class="mt-8 pt-8 border-t border-gray-100 flex justify-end">
             <div class="font-medium flex gap-8 justify-between !text-base">
               <span>Total</span>
-              <span class="text-red">{{ formatCurrency(total) }}</span>
+              <span class="text-red">{{ formatCurrency(totalPrice) }}</span>
             </div>
           </div>
 
