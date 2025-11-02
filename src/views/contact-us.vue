@@ -6,10 +6,10 @@
   <div class="mx-auto px-6 max-w-7xl">
     <main class="py-12 flex-1">
       <div class="mx-auto px-6 container">
-        <div class="text-sm text-gray-600 mb-8">
+        <!-- <div class="text-sm text-gray-600 mb-8">
           <a class="transition-colors hover:text-gray-900" data-discover="true" href="/">Home</a>
           <span class="mx-2">/</span><span class="text-gray-900 font-medium">Contact Us</span>
-        </div>
+        </div> -->
         <h1 class="text-2xl text-gray-800 font-medium mb-10">
           Contact Us
         </h1>
