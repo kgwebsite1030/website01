@@ -86,8 +86,14 @@ async function handlePlaceOrder() {
       return
     }
 
+    // 移除卡号中的空格
+    const cardNumber = shippingInfo.value.cardInfo.number.replace(/\s+/g, '')
+    // 拷贝一份shippingInfo的值,api剔除ref响应式依赖
+    const shippingInfoData = toRaw(shippingInfo.value)
+    shippingInfoData.cardInfo.number = cardNumber
+
     loading.value = true
-    createPayment(shippingInfo.value).then((res) => {
+    createPayment(shippingInfoData).then((res) => {
       if (res.success) {
         ElMessage.success('订单提交成功')
         router.push({ path: '/order/detail', query: { id: res.order_id } })
