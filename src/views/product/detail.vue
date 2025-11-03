@@ -7,7 +7,7 @@ import { useUserStore } from '~/stores/user'
 import { formatCurrency } from '~/utils/currency'
 
 const userStore = useUserStore()
-
+const cartStore = useCartStore()
 // 购买数量
 const quantity = ref(1)
 const route = useRoute()
@@ -20,6 +20,9 @@ function addCart() {
   // 这里可以添加实际的购物车逻辑
   if (userStore.isLogin) {
     addToCart(productId, quantity.value).then(() => {
+      // todo 优化，同一商品添加到购物车应该增加商品数量，而不是每次都增加1
+      // 可记录商品id，存在时不加1，不存在时加1
+      cartStore.addTotalItems(1)
       ElMessage.success('添加购物车成功')
     })
   }

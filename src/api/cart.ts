@@ -5,10 +5,7 @@ import { http } from '~/utils/http'
  * 获取购物车列表
  */
 export function getCartList() {
-  return http.get<CartList>('/cart/list').then((res) => {
-    useCartStore().setTotalItems(res.items.length)
-    return res
-  })
+  return http.get<CartList>('/cart/list')
 }
 
 /**
@@ -22,7 +19,7 @@ export function addToCart(productId: number, quantity: number) {
  * 更新购物车中某个商品数量
  */
 export function updateCart(cartId: number, quantity: number) {
-  return http.put(`/cart/update/${cartId}`, { quantity })
+  return http.put(`/cart/update/${cartId}?quantity=${quantity}`)
 }
 
 /**

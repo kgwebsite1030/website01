@@ -5,12 +5,17 @@ import { formatCurrency } from '~/utils/currency'
 
 const router = useRouter()
 
+const cartStore = useCartStore()
+
 const carts = ref<Cart[]>([])
 const total = ref(0)
 
-getCartList().then((res) => {
-  carts.value = res.items
-  total.value = res.totalPrice
+onMounted(() => {
+  getCartList().then((res) => {
+    cartStore.setTotalItems(res.items.length)
+    carts.value = res.items
+    total.value = res.totalPrice
+  })
 })
 
 const totalPrice = computed(() => carts.value.reduce((sum, item) => sum + item.price * item.quantity, 0))
@@ -35,6 +40,7 @@ function handleChangeQty(_item: Cart) {
 function handleRemove(_item: Cart) {
   // todo 需要优化 _item中没有cartId
   const { id } = _item
+  cartStore.subtractTotalItems(1)
   removeCart(id).then(() => {
     carts.value = carts.value.filter(item => item.id !== id)
   })
@@ -50,6 +56,7 @@ function handleClearCart() {
     type: 'warning',
   }).then(() => {
     clearCart().then(() => {
+      cartStore.clearCart()
       ElMessage.success('清空购物车成功')
       carts.value = []
     })
