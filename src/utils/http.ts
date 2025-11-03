@@ -8,6 +8,9 @@ export const alovaInstance = createAlova({
   requestAdapter: xhrRequestAdapter(),
   baseURL: import.meta.env.VITE_BASE_URL, // 设置基础 URL
   timeout: 10000, // 设置超时时间
+  // 全局关闭缓存：在默认情况下，GET 请求有 300000ms(5 分钟)的内存缓存时间
+  // https://alova.js.org/zh-CN/tutorial/cache/mode/#%E5%86%85%E5%AD%98%E6%A8%A1%E5%BC%8F%E9%BB%98%E8%AE%A4
+  cacheFor: null,
   // 请求拦截器
   beforeRequest: (method) => {
     const userStore = useUserStore()
