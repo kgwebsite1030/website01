@@ -3,58 +3,10 @@ import { useRequest } from 'alova/client'
 import { getOrderList } from '~/api/order'
 import { formatCurrency } from '~/utils/currency'
 
-interface OrderItem {
-  id: string
-  name: string
-  quantity: number
-  price: number
-}
-
-interface Order {
-  id: string
-  createTime: string
-  status: 'processing' | 'shipped' | 'delivered' | 'cancelled'
-  total: number
-  items: OrderItem[]
-}
-
-const orders: Order[] = [
-  {
-    id: 'ORD-20251001-0001',
-    createTime: '2025-10-01 13:20',
-    status: 'delivered',
-    total: 299.0,
-    items: [
-      { id: 'SKU-1001', name: 'Wireless Bluetooth Earbuds', quantity: 1, price: 199 },
-      { id: 'SKU-1002', name: 'Type-C Charging Cable', quantity: 2, price: 50 },
-    ],
-  },
-  {
-    id: 'ORD-20250920-0007',
-    createdAt: '2025-09-20 09:05',
-    status: 'shipped',
-    total: 1299.0,
-    items: [
-      { id: 'SKU-2001', name: 'Mechanical Keyboard', quantity: 1, price: 699 },
-      { id: 'SKU-2002', name: 'Ergonomic Mouse', quantity: 1, price: 600 },
-    ],
-  },
-  {
-    id: 'ORD-20250905-0010',
-    createdAt: '2025-09-05 18:42',
-    status: 'processing',
-    total: 89.0,
-    items: [
-      { id: 'SKU-3001', name: 'Tempered Glass Screen Protector (2-Pack)', quantity: 1, price: 89 },
-    ],
-  },
-]
 const router = useRouter()
 
 // 获取订单列表
-const { data } = useRequest(() => getOrderList())
-
-console.log(data)
+const { data: orders } = useRequest(() => getOrderList())
 
 function gotoOrderDetail(id: string) {
   router.push({ path: '/order/detail', query: { id } })
@@ -69,7 +21,7 @@ function gotoOrderDetail(id: string) {
           Order Tracking
         </h1>
         <p class="text-sm">
-          Total {{ orders.length }} orders
+          Total {{ orders?.length || 0 }} orders
         </p>
       </div>
 
@@ -80,14 +32,14 @@ function gotoOrderDetail(id: string) {
               <div>
                 <div class="flex flex-wrap gap-3 items-center">
                   <h2 class="text-lg font-medium">
-                    {{ order.id }}
+                    {{ order.orderId }}
                   </h2>
                   <span class="text-xs tracking-wide px-2 py-0.5 border rounded-md inline-flex uppercase items-center">
                     {{ order.status }}
                   </span>
                 </div>
                 <p class="text-sm mt-1">
-                  Ordered at: {{ order.createdAt }}
+                  Ordered at: {{ order.createTime }}
                 </p>
               </div>
               <div class="flex gap-4 items-center md:gap-6">
@@ -96,7 +48,7 @@ function gotoOrderDetail(id: string) {
                     Order Total
                   </p>
                   <p class="text-base font-semibold">
-                    {{ formatCurrency(order.total) }}
+                    {{ formatCurrency(order.totalPrice) }}
                   </p>
                 </div>
                 <button
@@ -110,10 +62,10 @@ function gotoOrderDetail(id: string) {
             </header>
 
             <div class="mt-4 divide-y">
-              <div v-for="item in order.items" :key="item.id" class="py-3 flex gap-4 items-start justify-between">
+              <div v-for="item in order.items" :key="item.productId" class="py-3 flex gap-4 items-start justify-between">
                 <div class="min-w-0">
                   <p class="font-medium truncate">
-                    {{ item.name }}
+                    {{ item.productName }}
                   </p>
                   <p class="text-sm mt-0.5">
                     Qty × {{ item.quantity }}
