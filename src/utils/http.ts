@@ -26,6 +26,8 @@ export const alovaInstance = createAlova({
     onSuccess: async (response) => {
       const { message, data, code } = response.data
 
+      const userStore = useUserStore()
+
       // satoken 登录失效的状态码有多个，需要后端统一返回401
       if (code === 401) {
         ElNotification({
@@ -33,6 +35,10 @@ export const alovaInstance = createAlova({
           message,
           type: 'error',
         })
+
+        userStore.setToken('')
+        location.href = '/auth/signin'
+        return
       }
 
       // 异常捕获、参数效验、服务错误等等，给前端一个提示
