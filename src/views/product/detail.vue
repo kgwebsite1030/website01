@@ -59,7 +59,8 @@ const { data }: any = useRequest(() => getGoodDetail(productId), { immediate: tr
           <el-input-number v-model="quantity" :min="1" :max="99" />
           <!-- 添加购物车 -->
           <el-button
-            class="text-white font-medium px-6 py-2 rounded-md bg-indigo-600 flex flex-1 gap-2 transition-colors hover:bg-indigo-700"
+            type="primary"
+            class="text-white font-medium px-6 py-2 rounded-md flex flex-1 gap-2 transition-colors"
             @click="addCart"
           >
             <div class="i-carbon-shopping-cart mr-2" />

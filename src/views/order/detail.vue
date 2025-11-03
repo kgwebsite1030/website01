@@ -3,7 +3,7 @@ import { useRequest } from 'alova/client'
 import { getOrderDetail } from '~/api/order'
 import { formatCurrency } from '~/utils/currency'
 
-const rid = useRoute().query.id as unknown as number
+const rid = useRoute().query.id as unknown as string
 
 // 获取订单详情
 const { data: order } = useRequest(() => getOrderDetail(rid))
@@ -18,12 +18,12 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
             Order Detail
           </h1>
           <p class="text-sm mt-1">
-            Order No.: {{ order.orderId }} · Ordered at: {{ order.createTime }}
+            Order No.: {{ order?.orderId }} · Ordered at: {{ order?.createTime }}
           </p>
         </div>
         <div class="flex gap-3 items-center">
           <span class="text-xs tracking-wide px-2 py-0.5 border rounded-md inline-flex uppercase items-center">
-            {{ order.status }}
+            {{ order?.status }}
           </span>
           <button type="button" class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center">
             Download Invoice
@@ -37,11 +37,11 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
             Shipping Address
           </h2>
           <div class="text-sm mt-3 space-y-1">
-            <p>{{ order.cc_name }}（{{ order.contactPhone }}）</p>
+            <p>{{ order?.cc_name }}（{{ order?.contactPhone }}）</p>
             <p>
-              {{ order.shippingCountry }} {{ order.shippingCity }} {{ order.shippingZipCode }}
+              {{ order?.shippingCountry }} {{ order?.shippingCity }} {{ order?.shippingZipCode }}
             </p>
-            <p>{{ order.shippingAddress }}</p>
+            <p>{{ order?.shippingAddress }}</p>
           </div>
         </section>
 
@@ -50,10 +50,10 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
             Payment Information
           </h2>
           <div class="text-sm mt-3 space-y-1">
-            <p>Payment Method: {{ order.paymentMethod }}</p>
-            <p>Transaction ID: {{ order.orderId }}</p>
-            <p v-if="order.updateTime">
-              Paid At: {{ order.updateTime }}
+            <p>Payment Method: {{ order?.paymentMethod }}</p>
+            <p>Transaction ID: {{ order?.cc_number }}</p>
+            <p v-if="order?.updateTime">
+              Paid At: {{ order?.updateTime }}
             </p>
           </div>
         </section>
@@ -81,18 +81,19 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
             </div>
           </div>
           <div
-            v-for="item in order.items"
+            v-for="item in order?.items"
             :key="item.id"
             class="px-5 py-4 gap-4 grid grid-cols-12 items-start"
           >
-            <div class="col-span-6 min-w-0 md:col-span-6">
+            <div class="flex gap-4 col-span-6 min-w-0 md:col-span-6">
               <p class="font-medium truncate">
-                {{ item.name }}
+                <img :src="item.imageUrl" alt="" class="h-10 w-10 object-cover">
               </p>
               <p class="text-sm mt-0.5">
-                SKU: {{ item.sku }}
+                {{ item.productName }}
               </p>
             </div>
+
             <div class="text-right col-span-2 md:col-span-2">
               × {{ item.quantity }}
             </div>
@@ -108,7 +109,7 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
           <div class="ml-auto w-full space-y-2 md:w-80">
             <div class="text-sm flex items-center justify-between">
               <span>Subtotal</span>
-              <span class="font-medium">{{ formatCurrency(order.items[0].price) }}</span>
+              <span class="font-medium">{{ formatCurrency(order?.items[0].price) }}</span>
             </div>
             <!--            <div class="text-sm flex items-center justify-between"> -->
             <!--              <span>Shipping Fee</span> -->
@@ -120,7 +121,7 @@ const { data: order } = useRequest(() => getOrderDetail(rid))
             <!--            </div> -->
             <div class="pt-2 flex items-center justify-between">
               <span class="text-base">Total Due</span>
-              <span class="text-base font-semibold">{{ formatCurrency(order.totalPrice) }}</span>
+              <span class="text-base font-semibold">{{ formatCurrency(order?.totalPrice) }}</span>
             </div>
           </div>
         </div>

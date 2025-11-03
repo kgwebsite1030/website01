@@ -9,6 +9,7 @@ import CreditOrDebitCard from './components/payment-method/CreditOrDebitCard.vue
 import countryCodeList from './country-code.json'
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 const shippingInfo = ref<PaymentRequest>({
   request_id: '',
@@ -25,7 +26,7 @@ const shippingFormRef = useTemplateRef<FormInstance>('shippingFormRef')
 const cardFormRef = ref<{ validate: () => Promise<void>, resetFields: () => void } | null>(null)
 
 const orderItems = ref<Cart[]>([])
-const loading = ref(false)
+const loading = ref(true)
 const cartLoading = ref(false)
 
 // 表单校验规则
@@ -72,42 +73,40 @@ async function fetchCartList() {
 
 // 提交订单
 async function handlePlaceOrder() {
-  try {
-    // 验证收货信息表单
-    await shippingFormRef.value?.validate()
+  loading.value = true
+  // 验证收货信息表单
+  await shippingFormRef.value?.validate()
 
-    // 验证卡片信息表单
-    if (cardFormRef.value) {
-      await cardFormRef.value.validate()
-    }
-
-    // 验证是否有订单项
-    if (orderItems.value.length === 0) {
-      ElMessage.warning('购物车为空，无法下单')
-      return
-    }
-
-    // 移除卡号中的空格
-    const cardNumber = shippingInfo.value.cardInfo.number.replace(/\s+/g, '')
-    // 拷贝一份shippingInfo的值,api剔除ref响应式依赖
-    const shippingInfoData = toRaw(shippingInfo.value)
-    shippingInfoData.cardInfo.number = cardNumber
-
-    loading.value = true
-    createPayment(shippingInfoData).then((res) => {
-      if (res.success) {
-        ElMessage.success('订单提交成功')
-        router.push({ path: '/order/detail', query: { id: res.order_id } })
-      }
-      else {
-        ElMessage.error(res.message)
-        router.push({ path: '/' })
-      }
-    })
+  // 验证卡片信息表单
+  if (cardFormRef.value) {
+    await cardFormRef.value.validate()
   }
-  finally {
+
+  // 验证是否有订单项
+  if (orderItems.value.length === 0) {
+    ElMessage.warning('购物车为空，无法下单')
+    return
+  }
+
+  // 移除卡号中的空格
+  const cardNumber = shippingInfo.value.cardInfo.number.replace(/\s+/g, '')
+  // 拷贝一份shippingInfo的值,api剔除ref响应式依赖
+  const shippingInfoData = toRaw(shippingInfo.value)
+  shippingInfoData.cardInfo.number = cardNumber
+
+  createPayment(shippingInfoData).then((res) => {
+    const request_id = shippingInfoData.request_id
+    if (res.success) {
+      cartStore.clearCart()
+      ElMessage.success('订单提交成功')
+      router.push({ path: '/order/detail', query: { id: request_id } })
+    }
+    else {
+      ElMessage.error(res.message)
+    }
+  }).finally(() => {
     loading.value = false
-  }
+  })
 }
 
 // 页面加载时获取购物车列表
@@ -165,7 +164,7 @@ onMounted(() => {
             Payment Method
           </h3>
           <div class="space-y-4">
-            <div class="px-4 py-2 border border-indigo-500 rounded flex cursor-pointer items-center">
+            <div class="px-4 py-2 border rounded flex cursor-pointer items-center">
               <span class="text-sm ml-2">Credit / Debit Card</span>
             </div>
           </div>
@@ -180,11 +179,7 @@ onMounted(() => {
     </div>
 
     <div class="mt-10 w-full md:pr-10 md:w-2/3">
-      <el-button
-        type="primary" :loading="loading"
-        class="text-lg text-white tracking-wide font-semibold py-3 rounded bg-gray-900 w-full transition hover:bg-gray-700"
-        @click="handlePlaceOrder"
-      >
+      <el-button type="primary" :loading="loading" class="w-full" @click="handlePlaceOrder">
         Place Order
       </el-button>
     </div>

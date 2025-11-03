@@ -54,7 +54,7 @@ function gotoOrderDetail(id: string) {
                 <button
                   type="button"
                   class="text-sm px-3 py-2 border rounded-lg inline-flex items-center justify-center"
-                  @click="gotoOrderDetail(order.id)"
+                  @click="gotoOrderDetail(order.orderId)"
                 >
                   View Details
                 </button>

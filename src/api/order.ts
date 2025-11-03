@@ -11,6 +11,6 @@ export function getOrderList(data: orderListType = { status: 'PENDING' }) {
 }
 
 // 获取订单详情
-export function getOrderDetail(id: number = 0) {
+export function getOrderDetail(id: string) {
   return http.get(`orders/${id}`)
 }
