@@ -6,7 +6,7 @@ import VueHook from 'alova/vue'
 export const alovaInstance = createAlova({
   statesHook: VueHook,
   requestAdapter: xhrRequestAdapter(),
-  baseURL: 'https://kostock.work/api', // 设置基础 URL
+  baseURL: import.meta.env.VITE_BASE_URL, // 设置基础 URL
   timeout: 10000, // 设置超时时间
   // 请求拦截器
   beforeRequest: (method) => {
