@@ -4,15 +4,22 @@ const sendList = reactive({
   name: '',
   email: '',
   subject: '',
+  message: '',
 
 })
 
-function sendMessage() {
-  if (sendList.name && sendList.email && sendList.subject) {
+function sendMessage(e: Event) {
+  e.preventDefault()
+  if (sendList.name && sendList.email && sendList.subject && sendList.message) {
     ElNotification({
 
-      message: h('i', { style: 'color: teal' }, '表单提交成功'),
+      message: h('i', { style: 'color: teal' }, '发送成功'),
     })
+    // 清空表单数据
+    sendList.name = ''
+    sendList.email = ''
+    sendList.subject = ''
+    sendList.message = ''
   }
 }
 </script>
@@ -124,34 +131,34 @@ function sendMessage() {
                 Send Us a
                 Message
               </h2>
-              <form class="space-y-6">
+              <form class="space-y-6" @submit="sendMessage">
                 <div class="gap-6 grid grid-cols-1 md:grid-cols-2">
                   <div>
                     <label class="text-sm text-gray-700 mb-2 block">Your Name *</label><input
-                      class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="name"
-                      placeholder="John Doe" type="text" required :value="sendList.name"
+                      v-model="sendList.name" class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400"
+                      name="name" placeholder="John Doe" type="text" required
                     >
                   </div>
                   <div>
                     <label class="text-sm text-gray-700 mb-2 block">Your Email *</label><input
-                      class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="email"
-                      placeholder="john@example.com" type="email" required :value="sendList.email"
+                      v-model="sendList.email" class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400"
+                      name="email" placeholder="john@example.com" type="email" required
                     >
                   </div>
                 </div>
                 <div>
                   <label class="text-sm text-gray-700 mb-2 block">Subject</label><input
-                    class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="subject"
-                    placeholder="How can we help you?" type="text" required :value="sendList.subject"
+                    v-model="sendList.subject" class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400"
+                    name="subject" placeholder="How can we help you?" type="text" required
                   >
                 </div>
                 <div>
                   <label class="text-sm text-gray-700 mb-2 block">Message *</label><textarea
-                    class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400" name="message"
-                    placeholder="Please enter your message here..." required rows="5"
+                    v-model="sendList.message" class="px-4 py-2 border border-gray-300 w-full focus:border-gray-400"
+                    name="message" placeholder="Please enter your message here..." required rows="5"
                   />
                 </div>
-                <button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="submit" plain @click="sendMessage">
+                <button class="text-white py-3 bg-gray-800 w-full transition-colors hover:bg-gray-900" type="submit" plain>
                   Send Message
                 </button>
               </form>
