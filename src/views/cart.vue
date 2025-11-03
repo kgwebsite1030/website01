@@ -20,7 +20,7 @@ onMounted(() => {
 
 const totalPrice = computed(() => carts.value.reduce((sum, item) => sum + item.price * item.quantity, 0))
 
-const debouncedHandleChangeQty = useDebounceFn(handleChangeQty, 3000)
+const debouncedHandleChangeQty = useDebounceFn(handleChangeQty, 2000)
 
 /**
  * 商品数量被改变
