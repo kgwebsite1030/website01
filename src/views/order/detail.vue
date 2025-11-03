@@ -3,83 +3,10 @@ import { useRequest } from 'alova/client'
 import { getOrderDetail } from '~/api/order'
 import { formatCurrency } from '~/utils/currency'
 
-interface OrderItem {
-  id: string
-  name: string
-  sku: string
-  quantity: number
-  price: number
-}
-
-interface Address {
-  name: string
-  phone: string
-  province: string
-  city: string
-  district: string
-  detail: string
-}
-
-interface PaymentInfo {
-  method: string
-  transactionId: string
-  paidAt?: string
-}
-
-interface LogisticsInfo {
-  company: string
-  trackingNo: string
-}
-
-interface OrderDetail {
-  id: string
-  createdAt: string
-  status: 'processing' | 'shipped' | 'delivered' | 'cancelled'
-  items: OrderItem[]
-  subtotal: number
-  shippingFee: number
-  discount: number
-  address: Address
-  payment: PaymentInfo
-  logistics?: LogisticsInfo
-}
-
-const order: OrderDetail = {
-  id: 'ORD-20251001-0001',
-  createdAt: '2025-10-01 13:20',
-  status: 'shipped',
-  items: [
-    { id: 'SKU-1001', name: 'Wireless Bluetooth Earbuds', sku: 'WH-1001', quantity: 1, price: 199 },
-    { id: 'SKU-1002', name: 'Type-C Charging Cable', sku: 'CB-1002', quantity: 2, price: 50 },
-  ],
-  subtotal: 299,
-  shippingFee: 12,
-  discount: 10,
-  address: {
-    name: 'Zhang San',
-    phone: '13800000000',
-    province: 'Jiangsu Province',
-    city: 'Suzhou City',
-    district: 'Industrial Park',
-    detail: '3F, Kechuang Center, No. 88 Dushu Lake Ave',
-  },
-  payment: {
-    method: 'Credit Card',
-    transactionId: 'TRA-20251001-8899',
-    paidAt: '2025-10-01 13:21',
-  },
-  logistics: {
-    company: 'SF Express',
-    trackingNo: 'SF123456789CN',
-  },
-}
-
-const total = order.subtotal + order.shippingFee - order.discount
+const rid = useRoute().query.id as unknown as number
 
 // 获取订单详情
-const { data } = useRequest(() => getOrderDetail())
-
-console.log(data)
+const { data: order } = useRequest(() => getOrderDetail(rid))
 </script>
 
 <template>
@@ -91,7 +18,7 @@ console.log(data)
             Order Detail
           </h1>
           <p class="text-sm mt-1">
-            Order No.: {{ order.id }} · Ordered at: {{ order.createdAt }}
+            Order No.: {{ order.orderId }} · Ordered at: {{ order.createTime }}
           </p>
         </div>
         <div class="flex gap-3 items-center">
@@ -110,11 +37,11 @@ console.log(data)
             Shipping Address
           </h2>
           <div class="text-sm mt-3 space-y-1">
-            <p>{{ order.address.name }}（{{ order.address.phone }}）</p>
+            <p>{{ order.cc_name }}（{{ order.contactPhone }}）</p>
             <p>
-              {{ order.address.province }} {{ order.address.city }} {{ order.address.district }}
+              {{ order.shippingCountry }} {{ order.shippingCity }} {{ order.shippingZipCode }}
             </p>
-            <p>{{ order.address.detail }}</p>
+            <p>{{ order.shippingAddress }}</p>
           </div>
         </section>
 
@@ -123,10 +50,10 @@ console.log(data)
             Payment Information
           </h2>
           <div class="text-sm mt-3 space-y-1">
-            <p>Payment Method: {{ order.payment.method }}</p>
-            <p>Transaction ID: {{ order.payment.transactionId }}</p>
-            <p v-if="order.payment.paidAt">
-              Paid At: {{ order.payment.paidAt }}
+            <p>Payment Method: {{ order.paymentMethod }}</p>
+            <p>Transaction ID: {{ order.orderId }}</p>
+            <p v-if="order.updateTime">
+              Paid At: {{ order.updateTime }}
             </p>
           </div>
         </section>
@@ -181,19 +108,19 @@ console.log(data)
           <div class="ml-auto w-full space-y-2 md:w-80">
             <div class="text-sm flex items-center justify-between">
               <span>Subtotal</span>
-              <span class="font-medium">{{ formatCurrency(order.subtotal) }}</span>
+              <span class="font-medium">{{ formatCurrency(order.items[0].price) }}</span>
             </div>
-            <div class="text-sm flex items-center justify-between">
-              <span>Shipping Fee</span>
-              <span class="font-medium">{{ formatCurrency(order.shippingFee) }}</span>
-            </div>
-            <div class="text-sm flex items-center justify-between">
-              <span>Discount</span>
-              <span class="font-medium">-{{ formatCurrency(order.discount) }}</span>
-            </div>
+            <!--            <div class="text-sm flex items-center justify-between"> -->
+            <!--              <span>Shipping Fee</span> -->
+            <!--              <span class="font-medium">{{ formatCurrency(order.shippingFee) }}</span> -->
+            <!--            </div> -->
+            <!--            <div class="text-sm flex items-center justify-between"> -->
+            <!--              <span>Discount</span> -->
+            <!--              <span class="font-medium">-{{ formatCurrency(order.discount) }}</span> -->
+            <!--            </div> -->
             <div class="pt-2 flex items-center justify-between">
               <span class="text-base">Total Due</span>
-              <span class="text-base font-semibold">{{ formatCurrency(total) }}</span>
+              <span class="text-base font-semibold">{{ formatCurrency(order.totalPrice) }}</span>
             </div>
           </div>
         </div>
