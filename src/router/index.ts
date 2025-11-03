@@ -116,7 +116,7 @@ const router = createRouter({
   history: createWebHashHistory(),
 })
 
-const whiteList = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/product/detail', '/product', '/contact-us', '/cart', '/index']
+const whiteList = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/product/detail', '/product', '/contact-us', '/index']
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
