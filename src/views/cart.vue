@@ -77,9 +77,8 @@ function checkout() {
           </h1>
         </header>
         <div>
-          <el-button type="primary" plain :disabled="carts.length === 0" @click="handleClearCart">
-            Clear Cart All
-            Products
+          <el-button type="danger" plain :disabled="carts.length === 0" @click="handleClearCart">
+            <span>Clear</span>
           </el-button>
         </div>
         <div class="mt-8">
