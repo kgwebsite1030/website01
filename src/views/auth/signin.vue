@@ -9,8 +9,8 @@ const isEmailCaptcha = ref(false)
 const _loading = ref(false)
 
 const form = reactive({
-  email: 'londontunrbw@gmail.com',
-  password: '12345678',
+  email: '',
+  password: '',
   captcha: '',
   emailCaptcha: '',
 })
