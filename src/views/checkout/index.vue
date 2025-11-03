@@ -6,6 +6,7 @@ import { getCartList } from '~/api/cart'
 import { createPayment } from '~/api/payment'
 import OrderSummary from './components/OrderSummary.vue'
 import CreditOrDebitCard from './components/payment-method/CreditOrDebitCard.vue'
+import countryCodeList from './country-code.json'
 
 const router = useRouter()
 
@@ -100,6 +101,7 @@ async function handlePlaceOrder() {
       }
       else {
         ElMessage.error(res.message)
+        router.push({ path: '/' })
       }
     })
   }
@@ -150,11 +152,8 @@ onMounted(() => {
             <el-form-item label="Country" prop="ShippingCountry">
               <el-select v-model="shippingInfo.ShippingCountry" placeholder="请选择国家">
                 <el-option label="United States" value="United States" />
-                <el-option label="Canada" value="Canada" />
-                <el-option label="United Kingdom" value="United Kingdom" />
-                <el-option label="Australia" value="Australia" />
-                <el-option label="New Zealand" value="New Zealand" />
-                <el-option label="Other" value="Other" />
+
+                <el-option v-for="item in countryCodeList" :key="item.code" :label="item.en" :value="item.code" />
               </el-select>
             </el-form-item>
           </el-form>
