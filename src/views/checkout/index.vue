@@ -26,7 +26,7 @@ const shippingFormRef = useTemplateRef<FormInstance>('shippingFormRef')
 const cardFormRef = ref<{ validate: () => Promise<void>, resetFields: () => void } | null>(null)
 
 const orderItems = ref<Cart[]>([])
-const loading = ref(true)
+const loading = ref(false)
 const cartLoading = ref(false)
 
 // 表单校验规则

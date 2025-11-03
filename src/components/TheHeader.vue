@@ -4,6 +4,7 @@ import { settings } from '~/settings'
 import { useCartStore } from '~/stores/cart'
 import { useUserStore } from '~/stores/user'
 
+const router = useRouter()
 const cartStore = useCartStore()
 const userStore = useUserStore()
 
@@ -21,6 +22,7 @@ function handleLogout() {
     logout().then(() => {
       userStore.setToken('')
       userStore.setUserInfo(null)
+      router.push('/')
     })
   })
 }
